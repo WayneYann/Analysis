@@ -11,7 +11,7 @@ import matplotlib as mat
 import adjustText
 import os
 mat.rcParams['mathtext.default'] = 'regular'
-vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v02.csv')
+vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v03.csv')
 Metal_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,0:6]
 Data_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,7:]
 Data = np.genfromtxt(vibration_file, delimiter=',')[1:,7:]

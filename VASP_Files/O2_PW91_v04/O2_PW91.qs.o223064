@@ -1,0 +1,165 @@
+Adding dependency `pgi/10` to your environment
+Adding dependency `openmpi/pgi10-1.4.2-mx` to your environment
+Adding dependency `acml/pgi-4.3.0-64` to your environment
+Adding package `vasp/5.3.2+vtst+d3-pgi10` to your environment
+GridEngine parameters:
+  nhosts         = 1
+  nproc          = 8
+  mpiexec        = /opt/shared/openmpi/pgi10-1.4.2-mx/bin/mpiexec
+  pe_hostfile    = /opt/shared/OpenGridScheduler/2011.11p1/default/spool/node01-56/active_jobs/223064.1/pe_hostfile
+  vasp           = /opt/shared/VASP/5.3.2+vtst+d3-pgi10/vasp
+
+node01-56 8 all.q@node01-56 UNDEFINED
+
+-- begin OPENMPI run --
+
+ ========================   JOB MAP   ========================
+
+ Data for node: Name: node01-56	Num procs: 8
+ 	Process OMPI jobid: [2501,1] Process rank: 0
+ 	Process OMPI jobid: [2501,1] Process rank: 1
+ 	Process OMPI jobid: [2501,1] Process rank: 2
+ 	Process OMPI jobid: [2501,1] Process rank: 3
+ 	Process OMPI jobid: [2501,1] Process rank: 4
+ 	Process OMPI jobid: [2501,1] Process rank: 5
+ 	Process OMPI jobid: [2501,1] Process rank: 6
+ 	Process OMPI jobid: [2501,1] Process rank: 7
+
+ =============================================================
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+ running on    8 total cores
+ distrk:  each k-point on    8 cores,    1 groups
+ distr:  one band on    8 cores,    1 groups
+ using from now: INCAR     
+ vasp.5.3.2 13Sep12 (build Mar 13 2013 15:03:29) complex                         
+ POSCAR found type information on POSCAR  O 
+ POSCAR found :  1 types and       2 ions
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|      For optimal performance we recommend that you set                      |
+|        NPAR = 4 - approx SQRT( number of cores)                             |
+|      (number of cores/NPAR must be integer)                                 |
+|      This setting will greatly improve the performance of VASP for DFT.     |
+|      The default NPAR=number of cores might be grossly inefficient          |
+|      on modern multi-core architectures or massively parallel machines.     |
+|      Do your own testing.                                                   |
+|      Unfortunately you need to use the default for hybrid, GW and RPA       |
+|      calculations.                                                          |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|  ADVICE TO THIS USER RUNNING 'VASP/VAMP'   (HEAR YOUR MASTER'S VOICE ...):  |
+|                                                                             |
+|      You have a (more or less) 'small supercell' and for smaller cells      |
+|      it is recommended  to use the reciprocal-space projection scheme!      |
+|      The real space optimization is not  efficient for small cells and it   |
+|      is also less accurate ...                                              |
+|      Therefore set LREAL=.FALSE. in the  INCAR file                         |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+ LDA part: xc-table for Ceperly-Alder, Vosko type interpolation para-ferro
+ POSCAR found type information on POSCAR  O 
+ POSCAR found :  1 types and       2 ions
+ POSCAR, INCAR and KPOINTS ok, starting setup
+ WARNING: small aliasing (wrap around) errors must be expected
+ FFT: planning ...
+ WAVECAR not read
+ entering main loop
+       N       E                     dE             d eps       ncg     rms          rms(c)
+DAV:   1     0.120098072872E+03    0.12010E+03   -0.15344E+03    76   0.325E+02
+DAV:   2     0.372843560275E+02   -0.82814E+02   -0.82386E+02    82   0.921E+01
+DAV:   3     0.708198049515E+01   -0.30202E+02   -0.30196E+02    56   0.734E+01
+DAV:   4    -0.482166920600E+01   -0.11904E+02   -0.11536E+02    88   0.248E+01
+DAV:   5    -0.971752546206E+01   -0.48959E+01   -0.48959E+01    44   0.123E+01
+DAV:   6    -0.980673507812E+01   -0.89210E-01   -0.88839E-01    64   0.264E+00
+DAV:   7    -0.981316025651E+01   -0.64252E-02   -0.64251E-02    72   0.598E-01
+DAV:   8    -0.981322272465E+01   -0.62468E-04   -0.62463E-04    61   0.767E-02
+DAV:   9    -0.981322765157E+01   -0.49269E-05   -0.49269E-05    72   0.163E-02
+DAV:  10    -0.981322771547E+01   -0.63905E-07   -0.64025E-07    61   0.219E-03    0.631E+00
+RMM:  11    -0.952487224774E+01    0.28836E+00   -0.95399E-01    44   0.830E+00    0.293E+00
+RMM:  12    -0.981008021482E+01   -0.28521E+00   -0.13814E-01    44   0.338E+00    0.141E+00
+RMM:  13    -0.980778507928E+01    0.22951E-02   -0.83024E-02    44   0.217E+00    0.335E-01
+RMM:  14    -0.981411251637E+01   -0.63274E-02   -0.46172E-03    44   0.682E-01    0.177E-01
+RMM:  15    -0.981587870160E+01   -0.17662E-02   -0.14475E-03    44   0.384E-01    0.364E-02
+RMM:  16    -0.981663816343E+01   -0.75946E-03   -0.15347E-04    44   0.137E-01    0.148E-02
+RMM:  17    -0.981683868895E+01   -0.20053E-03   -0.49778E-05    44   0.555E-02    0.655E-03
+RMM:  18    -0.981697214305E+01   -0.13345E-03   -0.13136E-05    42   0.275E-02    0.420E-03
+RMM:  19    -0.981712093464E+01   -0.14879E-03   -0.86983E-06    40   0.227E-02    0.276E-03
+RMM:  20    -0.981726484406E+01   -0.14391E-03   -0.12391E-05    41   0.239E-02    0.155E-03
+RMM:  21    -0.981731588369E+01   -0.51040E-04   -0.26413E-06    35   0.102E-02    0.108E-03
+RMM:  22    -0.981680725121E+01    0.50863E-03   -0.64525E-06    38   0.150E-02    0.870E-04
+RMM:  23    -0.981682683280E+01   -0.19582E-04   -0.14754E-06    34   0.723E-03    0.440E-04
+RMM:  24    -0.981685736568E+01   -0.30533E-04   -0.10043E-06    32   0.647E-03    0.468E-04
+RMM:  25    -0.981687167180E+01   -0.14306E-04   -0.16534E-06    33   0.679E-03    0.289E-04
+RMM:  26    -0.981687101129E+01    0.66051E-06   -0.31847E-07    30   0.351E-03
+   1 F= -.98168710E+01 E0= -.98170643E+01  d E =0.579791E-03  mag=     2.0000
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|      Your timestep is larger than 0.1 Angst.                                |
+|      For finite differences this really does not make sense. I will         |
+|      reset POTIM to 0.015. I recommend to use 0.01 to 0.02 for finite       |
+|      differences.                                                           |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+ Finite differences POTIM= 0.01500 DOF=   6
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|     EEEEEEE  RRRRRR   RRRRRR   OOOOOOO  RRRRRR      ###     ###     ###     |
+|     E        R     R  R     R  O     O  R     R     ###     ###     ###     |
+|     E        R     R  R     R  O     O  R     R     ###     ###     ###     |
+|     EEEEE    RRRRRR   RRRRRR   O     O  RRRRRR       #       #       #      |
+|     E        R   R    R   R    O     O  R   R                               |
+|     E        R    R   R    R   O     O  R    R      ###     ###     ###     |
+|     EEEEEEE  R     R  R     R  OOOOOOO  R     R     ###     ###     ###     |
+|                                                                             |
+|      VASP internal routines  have requested a change of the k-point set.    |
+|      Unfortunately this is only possible if NPAR=number of nodes.           |
+|      Please remove the tag NPAR from the INCAR file and restart the         |
+|      calculations.                                                          |
+|                                                                             |
+|      ---->  I REFUSE TO CONTINUE WITH THIS SICK JOB ..., BYE!!! <----       |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+FORTRAN STOP
+FORTRAN STOP
+FORTRAN STOP
+FORTRAN STOP
+FORTRAN STOP
+FORTRAN STOP
+FORTRAN STOP
+FORTRAN STOP
+
+real	19m28.908s
+user	155m25.210s
+sys	0m4.598s
+-- end OPENMPI run --

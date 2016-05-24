@@ -1,0 +1,129 @@
+Adding dependency `pgi/10` to your environment
+Adding dependency `openmpi/pgi10-1.4.2-mx` to your environment
+Adding dependency `acml/pgi-4.3.0-64` to your environment
+Adding package `vasp/5.3.2+vtst+d3-pgi10` to your environment
+GridEngine parameters:
+  nhosts         = 1
+  nproc          = 16
+  mpiexec        = /opt/shared/openmpi/pgi10-1.4.2-mx/bin/mpiexec
+  pe_hostfile    = /opt/shared/OpenGridScheduler/2011.11p1/default/spool/node01-49/active_jobs/223072.1/pe_hostfile
+  vasp           = /opt/shared/VASP/5.3.2+vtst+d3-pgi10/vasp
+
+node01-49 16 all.q@node01-49 UNDEFINED
+
+-- begin OPENMPI run --
+
+ ========================   JOB MAP   ========================
+
+ Data for node: Name: node01-49	Num procs: 16
+ 	Process OMPI jobid: [37610,1] Process rank: 0
+ 	Process OMPI jobid: [37610,1] Process rank: 1
+ 	Process OMPI jobid: [37610,1] Process rank: 2
+ 	Process OMPI jobid: [37610,1] Process rank: 3
+ 	Process OMPI jobid: [37610,1] Process rank: 4
+ 	Process OMPI jobid: [37610,1] Process rank: 5
+ 	Process OMPI jobid: [37610,1] Process rank: 6
+ 	Process OMPI jobid: [37610,1] Process rank: 7
+ 	Process OMPI jobid: [37610,1] Process rank: 8
+ 	Process OMPI jobid: [37610,1] Process rank: 9
+ 	Process OMPI jobid: [37610,1] Process rank: 10
+ 	Process OMPI jobid: [37610,1] Process rank: 11
+ 	Process OMPI jobid: [37610,1] Process rank: 12
+ 	Process OMPI jobid: [37610,1] Process rank: 13
+ 	Process OMPI jobid: [37610,1] Process rank: 14
+ 	Process OMPI jobid: [37610,1] Process rank: 15
+
+ =============================================================
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+warning:regcache incompatible with malloc
+ running on   16 total cores
+ distrk:  each k-point on   16 cores,    1 groups
+ distr:  one band on   16 cores,    1 groups
+ using from now: INCAR     
+ vasp.5.3.2 13Sep12 (build Mar 13 2013 15:03:29) complex                         
+ POSCAR found :  1 types and       2 ions
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|      For optimal performance we recommend that you set                      |
+|        NPAR = 4 - approx SQRT( number of cores)                             |
+|      (number of cores/NPAR must be integer)                                 |
+|      This setting will greatly improve the performance of VASP for DFT.     |
+|      The default NPAR=number of cores might be grossly inefficient          |
+|      on modern multi-core architectures or massively parallel machines.     |
+|      Do your own testing.                                                   |
+|      Unfortunately you need to use the default for hybrid, GW and RPA       |
+|      calculations.                                                          |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|  ADVICE TO THIS USER RUNNING 'VASP/VAMP'   (HEAR YOUR MASTER'S VOICE ...):  |
+|                                                                             |
+|      You have a (more or less) 'small supercell' and for smaller cells      |
+|      it is recommended  to use the reciprocal-space projection scheme!      |
+|      The real space optimization is not  efficient for small cells and it   |
+|      is also less accurate ...                                              |
+|      Therefore set LREAL=.FALSE. in the  INCAR file                         |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+ LDA part: xc-table for Ceperly-Alder, Vosko type interpolation para-ferro
+ POSCAR found :  1 types and       2 ions
+ POSCAR, INCAR and KPOINTS ok, starting setup
+ WARNING: small aliasing (wrap around) errors must be expected
+ FFT: planning ...
+ WAVECAR not read
+ internal ERROR RSPHER:running out of buffer             0            0 
+            8            1            0
+ nonlr.F:Out of buffer RSPHER
+ internal ERROR RSPHER:running out of buffer             0            0 
+            8            1            0
+ nonlr.F:Out of buffer RSPHER
+ internal ERROR RSPHER:running out of buffer             0            0 
+            8            1            0
+ nonlr.F:Out of buffer RSPHER
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 15 in communicator MPI_COMM_WORLD 
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpiexec has exited due to process rank 15 with PID 1428 on
+node node01-49 exiting without calling "finalize". This may
+have caused other processes in the application to be
+terminated by signals sent by mpiexec (as reported here).
+--------------------------------------------------------------------------
+[node01-49:01412] 2 more processes have sent help message help-mpi-api.txt / mpi-abort
+[node01-49:01412] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+
+real	0m8.428s
+user	0m6.796s
+sys	0m0.312s
+-- end OPENMPI run --
