@@ -11,7 +11,7 @@ import matplotlib as mat
 import adjustText
 import os
 mat.rcParams['mathtext.default'] = 'regular'
-vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v03.csv')
+vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v04.csv')
 Metal_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,0:6]
 Data_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,7:]
 Data = np.genfromtxt(vibration_file, delimiter=',')[1:,7:]
@@ -19,6 +19,7 @@ Metal_Info = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[1:,0:6]
 
 #Calculating reduced mass
 MassO = 16
+MassH = 1.00794
 vMO = Data[:,8]
 vMO2 = Data[:,29]
 vOOatop = Data[:,32]
@@ -30,16 +31,20 @@ vMOH = Data[:,14]
 vMOH2 = Data[:,11]
 Dband = Data[:,53]
 DataLabels = []
+vMH = Data[:,54]
+vMHhorlit = Data[:,55]
 for i in range(0,len(Data_Labels)):
     DataLabels.append(Data_Labels[i])
     DataLabels.append(i)
-Mr = (1/MassO+1/(Data[:,0]*Data[:,2]*Data[:,3]**2))**(-0.5)
+MrO = (1/MassO+1/(Data[:,0]*Data[:,2]*Data[:,3]**2))**(-0.5)
+MrH = (1/MassH+1/(Data[:,0]*Data[:,2]*Data[:,63]**2))**(-0.5)
+MrN = (1/14+1/(Data[:,0]*Data[:,2]*Data[:,61]**2))**(-0.5)
 
 #Plotting Reduced Masses
 plt.figure(1)
 plt.figure(figsize=(16,8),dpi=500)
-plt.plot(vMO,Mr,'o',markersize=12)
-#plt.title('Reduced Mass for Oxygen adsorbed on Metals Calculated from DFT',size=12, fontweight='bold')
+plt.plot(vMO,MrO,'o',markersize=12)
+plt.title('Reduced Mass for Oxygen adsorbed on Metals Calculated from DFT',size=12, fontweight='bold')
 plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
 plt.ylabel('$Mr^{0.5}$ $(g/mol)^{0.5}$',size=20, fontweight='bold')
 plt.xticks(size=16)
@@ -50,13 +55,86 @@ for i in range(0,len(vMO)):
     Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
 mat.rc('text', usetex = False)
 texts = []
-for x, y, s in zip(vMO, Mr, Marker):
+for x, y, s in zip(vMO, MrO, Marker):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
-adjustText.adjust_text(texts, vMO,Mr,autoalign=True,va='bottom',
+adjustText.adjust_text(texts, vMO,MrO,autoalign=True,va='bottom',
                 ha='right',arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
+#Plotting Reduced Masses
+plt.figure(1)
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(vMO,MrH,'or',markersize=12)
+plt.title('Reduced Mass for Hydrogen adsorbed on Metals Calculated from DFT',size=16, fontweight='bold')
+plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
+plt.ylabel('$Mr^{0.5}$ $(g/mol)^{0.5}$',size=20, fontweight='bold')
+plt.xticks(size=16)
+plt.yticks(size=16)
+mat.rc('text', usetex = True)
+Marker = []
+for i in range(0,len(vMO)):
+    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(vMO, MrH, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts, vMO,MrH,autoalign=True,va='bottom',
+                ha='right',arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+
+#Plotting Reduced Masses
+plt.figure(1)
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(vMO,MrN,'og',markersize=12)
+plt.title('Reduced Mass for Nitrogen adsorbed on Metals Calculated from DFT',size=16, fontweight='bold')
+plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
+plt.ylabel('$Mr^{0.5}$ $(g/mol)^{0.5}$',size=20, fontweight='bold')
+plt.xticks(size=16)
+plt.yticks(size=16)
+mat.rc('text', usetex = True)
+Marker = []
+for i in range(0,len(vMO)):
+    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(vMO, MrN, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts, vMO,MrN,autoalign=True,va='bottom',
+                ha='right',arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+
+#Plotting Reduced Masses
+plt.figure(1)
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(vMO,MrO,'ob',markersize=12)
+plt.plot(vMO,MrN,'og',markersize=12)
+plt.title('Reduced Mass for Oxygen and Nitrogen adsorbed on Metals Calculated from DFT',size=16, fontweight='bold')
+plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
+plt.ylabel('$Mr^{0.5}$ $(g/mol)^{0.5}$',size=20, fontweight='bold')
+plt.legend(['Pt-O','Pt-N'],loc=2,prop={'size':20})
+plt.xticks(size=16)
+plt.yticks(size=16)
+mat.rc('text', usetex = True)
+Marker = []
+for i in range(0,len(vMO)):
+    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+for i in range(0,len(vMO)):
+    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+mat.rc('text', usetex = False)
+texts = []
+
+                
+Mr2 = np.concatenate((MrO,MrN))
+vM2O = np.concatenate((vMO,vMO))
+
+texts = []
+
+for x, y, s in zip(vM2O,Mr2, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,autoalign=True)
+plt.show()
 #PLotting v(M-O) vs v(M-O2)
+
 idx = np.isfinite(vMO) & np.isfinite(vMO2)
 m1,b1 = np.polyfit(vMO[idx], vMO2[idx], 1) 
 idx = np.isfinite(vMO) & np.isfinite(vOOatop)
@@ -115,17 +193,33 @@ adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'},
 plt.show()
 
 #Plotting parallel vibrations
+vMHhor = []
+NN = Data[:,0]
+Ms = Data[:,2]
+cosa = Data[:,63]
+sina = Data[:,64]
+ON2overN = Data[:,65]
+ONN2cos = Data[:,66]
+ONN2sin = Data[:,67]
+
 vMOhor = []
 NN = Data[:,0]
 Ms = Data[:,2]
 cosa = Data[:,3]
 sina = Data[:,4]
 for i in range(0,len(vMO)):
-    if Data[i,0]>2:
-        vMOhor.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2)))**0.5)
+    if Data[i,0]==3:
+        vMOhor.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2))/2)**0.5)
+        #vMOhor.append(vMO[i]*(Mrperp/Mrpara)**(0.5))
+    elif Data[i,0] ==4:
+        Mr = MassO*NN[i]*Ms[i]/(MassO+NN[i]*Ms[i])
+        Mrperp = MassO*NN[i]*cosa[i]*Ms[i]/(MassO+NN[i]*cosa[i]*Ms[i])
+        Mrpara = ((Mr**2-Mrperp**2)/2)**(0.5)
+        vMOhor.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2))/2)**0.5)
+        #vMOhor.append(vMO[i]*(Mrperp/Mrpara)**(0.5))
+
     elif Data[i,0]==2:
-        #vMOhor.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]*(Ms[i]/MassO)*sina[i]**2)))**0.5)
-        vMOhor.append(float('nan'))   
+        vMOhor.append(float('nan'))  
     else:
         vMOhor.append(float('nan'))  
 vMOhor = np.array(vMOhor)
@@ -429,27 +523,27 @@ plt.show()
 #PLotting v(M-O) vs v(deltaE)
 plt.figure(10)
 plt.figure(figsize=(16,10),dpi=500)
-EStephen = Data[:,5]
+EJosh = Data[:,5]
 EAbildPedersen = Data[:,7]
-idx = np.isfinite(EStephen) & np.isfinite(vMO)
-m1,b1 = np.polyfit(EStephen[idx], vMO[idx], 1)
-plt.plot(EStephen[idx], m1*EStephen[idx]+b1,'-b')
+idx = np.isfinite(EJosh) & np.isfinite(vMO)
+m1,b1 = np.polyfit(EJosh[idx], vMO[idx], 1)
+plt.plot(EJosh[idx], m1*EJosh[idx]+b1,'-b')
 idx = np.isfinite(EAbildPedersen) & np.isfinite(vMO)
 m2,b2 = np.polyfit(EAbildPedersen[idx], vMO[idx], 1) 
 plt.plot(EAbildPedersen[idx], m2*EAbildPedersen[idx]+b2,'-g')
 
 
-plt.plot(EStephen,vMO,'o',markersize=12)
+plt.plot(EJosh,vMO,'o',markersize=12)
 plt.plot(EAbildPedersen,vMO,'o',markersize=12)
 #plt.title('Experimental frequencies in adsorbed O2 vs O',size=12, fontweight='bold')
 plt.ylabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
 plt.xlabel('Eads',size=20, fontweight='bold')
-plt.legend(['EStephen: %sx+%s' %(round(m1,2),round(b1,2)), \
+plt.legend(['EJosh: %sx+%s' %(round(m1,2),round(b1,2)), \
 'EAbildPedersen$^{1}$: %sx+%s' %(round(m2,2),round(b2,2))],loc=3,prop={'size':20})
 plt.xticks(size=16)
 plt.yticks(size=16)
 vMO_2 = np.concatenate((vMO,vMO))
-Eads = np.concatenate((EStephen,EAbildPedersen))
+Eads = np.concatenate((EJosh,EAbildPedersen))
 
 
 
@@ -499,7 +593,51 @@ adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'},
         arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
-
+#Plotting parallel vibrations for Hydrogen
+vMHhor = []
+NN = Data[:,0]
+Ms = Data[:,2]
+cosa = Data[:,63]
+sina = Data[:,64]
+HN2overN = Data[:,68]
+HNN2cos = Data[:,69]
+HNN2sin = Data[:,70]
+for i in range(0,len(vMHhorlit)):
+    if Data[i,0]==3:
+        vMHhor.append(vMH[i]*((1+NN[i]*(Ms[i]/MassH)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassH)*sina[i]**2)))**0.5)
+         #vMHhor.append(vMH[i]/2**0.5*(sina[i] + HNN2sin[i]/HN2overN[i])/(cosa[i] + HNN2cos[i]/HN2overN[i]))
+    elif Data[i,0]==2:
+        #vMOhor.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]*(Ms[i]/MassO)*sina[i]**2)))**0.5)
+        vMHhor.append(float('nan'))   
+    else:
+        vMHhor.append(float('nan'))  
+vMHhor = np.array(vMHhor)
+ 
+idx = np.isfinite(vMH) & np.isfinite(vMHhor)
+ 
+pHOR = np.polyfit(vMH[idx], vMHhor[idx], 1)
+plt.figure(3)
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(vMH,vMHhor,'o',markersize=12)
+plt.plot(vMH, pHOR[0]*vMH +pHOR[1],'-k')
+#plt.title('Parallel and Perendicular frequencies for Oxygen',size=12, fontweight='bold')
+plt.xlabel('v(M-H) parallel Exp $cm^{-1}$',size=20, fontweight='bold')
+plt.ylabel('v(M-H) parallel Central Force $cm^{-1}$',size=20, fontweight='bold')
+plt.legend(['v(M-O) parallel: %sx' %(round(pHOR[0],2))],loc=2,prop={'size':20})
+plt.xticks(size=16)
+plt.yticks(size=16)
+mat.rc('text', usetex = True)
+Marker = []
+for i in range(0,len(vMHhorlit)):
+    #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+','+str(round(Data[i,31])).rstrip('.0')+'}}$'))
+    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,60])).rstrip('.0')+'}}$'))
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(vMH, vMHhor, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,only_move={'points':'y','text':'y'},autoalign=True, 
+        arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
 
 
 

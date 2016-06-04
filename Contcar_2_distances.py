@@ -8,12 +8,11 @@ from __future__ import division
 import os
 import numpy as np
 import Text_Parse
-#os.listdir('C:/Users/Josh/Desktop/XSD files')
-# Run the above function and store its results in a variable.
-directory=os.path.expanduser('~/Box Sync/Synced_Files/University of Delaware/Lansford_Vlachos/VASP/Surfaces/Surfaces/Surfs_Oads')
+
+directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\Analysis\VASP_Files\O_Hollow')
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
-Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\","\\CONTCAR")
+Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\O_Hollow\\","\\CONTCAR")
 
 #labels1212 = np.genfromtxt('./Lansford_Stats_HW3_data/12.12.csv', delimiter=',', dtype=str)[0,:]
 #data1212 = np.genfromtxt('C:\Users\Josh\Desktop\XSD files', delimiter=',')[1:,:]
