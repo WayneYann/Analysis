@@ -14,12 +14,12 @@ import matplotlib as mat
 mat.rcParams['mathtext.default'] = 'regular'
 mat.rcParams['lines.linewidth'] = 3
 mat.rcParams['lines.markersize'] = 10
-
-directory=os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/VASP_Files/Diatomics/N2_harmonic')
+Folder = 'S2'
+directory=os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research//VASP_Files/Diatomics/%s' % Folder)
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
 OSZICAR_FILES = Text_Parse.list_contains(full_file_paths,"OSZICAR")
-File_Names = Text_Parse.between_values(CONTCAR_FILES,"N2_harmonic\\","\\CONTCAR")
+File_Names = Text_Parse.between_values(CONTCAR_FILES,"%s\\" % Folder,"\\CONTCAR")
 
 #labels1212 = np.genfromtxt('./Lansford_Stats_HW3_data/12.12.csv', delimiter=',', dtype=str)[0,:]
 #data1212 = np.genfromtxt('C:\Users\Josh\Desktop\XSD files', delimiter=',')[1:,:]
@@ -44,7 +44,7 @@ for i in range(0,num_Files):
     Energy = Text_Parse.list_split(Energy," ")
     Energy = Text_Parse.string2float(Energy)
     Energy = np.array(Energy)
-    Energy=Energy[0]
+    Energy=Energy[-1]
     Energies = np.hstack((Energies,Energy))
     
 D0 = min(Energies)
@@ -63,7 +63,10 @@ kB = 1.3806505*10**(-23) #boltzman's constant
 JeV = 1.60217653*10**(-19) #eV to Joules
 
 #Full fit
-plt.figure(figsize=(7,5),dpi=500)    
+plt.figure(figsize=(7,5),dpi=500)
+idx = (Distances<-.005)+(Distances>.005)
+Distances = Distances[idx]
+Energies=Energies[idx]
 ppot, pcov = curve_fit(func,Distances,Energies)
 De = ppot[0]
 a = ppot[1]

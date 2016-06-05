@@ -44,7 +44,7 @@ for i in range(0,num_Files):
     Energy = Text_Parse.list_split(Energy," ")
     Energy = Text_Parse.string2float(Energy)
     Energy = np.array(Energy)
-    Energy=Energy[0]
+    Energy=Energy[-1]
     Energies = np.hstack((Energies,Energy))
     
 D0 = min(Energies)
