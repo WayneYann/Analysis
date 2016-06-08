@@ -14,11 +14,11 @@ import matplotlib as mat
 mat.rcParams['mathtext.default'] = 'regular'
 mat.rcParams['lines.linewidth'] = 3
 mat.rcParams['lines.markersize'] = 10
-Folder = 'P2'
-m1 = 32*1.6737236*10**(-27) #kg
-m2 = 32*1.6737236*10**(-27) #kg
+Folder = 'Pt111'
+m1 = 16*1.6737236*10**(-27) #kg
+m2 = 10000*1.6737236*10**(-27) #kg
 mu = m1*m2/(m1+m2) #kg
-directory=os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research//VASP_Files/Diatomics/%s' % Folder)
+directory=os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research//VASP_Files/O_Hollow_noD/%s' % Folder)
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
 OSZICAR_FILES = Text_Parse.list_contains(full_file_paths,"OSZICAR")
@@ -38,7 +38,7 @@ for i in range(0,num_Files):
     Coordinates = Text_Parse.string2float(Coordinates)
     Coordinates = np.array(Coordinates)
     Coordinates = np.dot(Coordinates,Multiplier)
-    distance = (sum((Coordinates[0,:]-Coordinates[1,:])**2))**0.5
+    distance = abs((Coordinates[64,2]-Coordinates[63,2]))
     distance = distance.flatten()    
     Distances = np.hstack((Distances,distance))
 Energies = []
@@ -74,14 +74,20 @@ plt.figure(figsize=(7,5),dpi=500)
 #Distances = Distances[idx]
 #Energies=Energies[idx]
 
-ppot, pcov = curve_fit(func,Distances,Energies,p0=np.array([2,2,Distances[minIndex]]),maxfev = 50000)
+ppot, pcov = curve_fit(func,Distances,Energies,p0=np.array([3.2,2,1.3]),maxfev = 5000)
 De = ppot[0]
 a = ppot[1]
 re=ppot[2]
-
-print('De')
+Distance_sorted = np.linspace(min(Distances),max(Distances),50)
+Energy_fitted = func(Distance_sorted,De,a,re)
+plt.plot(Distances,Energies,'o',Distance_sorted,Energy_fitted)
+plt.title('Pt Frequency D2',size=14, fontweight='bold')
+plt.ylabel('Potential Energy (eV)',size=14, fontweight='bold')
+plt.xlabel('Distance from Equilibrium (A)',size=14, fontweight='bold')
+plt.xticks(size=14)
+plt.yticks(size=14)
+plt.show()
 print(De)
-print('a')
 print(a)
 
 #Harmonic Approximation
@@ -99,14 +105,3 @@ print(frequency)
 print('bond length')
 print(re)
 print(pcov)
-
-#Plotting
-Distance_sorted = np.linspace(min(Distances),max(Distances),50)
-Energy_fitted = func(Distance_sorted,De,a,re)
-plt.plot(Distances,Energies,'o',Distance_sorted,Energy_fitted)
-plt.title('Pt Frequency D2',size=14, fontweight='bold')
-plt.ylabel('Potential Energy (eV)',size=14, fontweight='bold')
-plt.xlabel('Distance from Equilibrium (A)',size=14, fontweight='bold')
-plt.xticks(size=14)
-plt.yticks(size=14)
-plt.show()
