@@ -12,11 +12,11 @@ import csv
 
 
 
-directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\Analysis\VASP_Files\N_Hollow')
+directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\VASP_Files\O_Hollow_Morse\Au111')
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
 CONTCAR_FILES = [i for i in CONTCAR_FILES if not ('freq' in i)]
-Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\N_Hollow\\","\\CONTCAR")
+Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\Au111\\","\\CONTCAR")
 
 #Repeating surface
 a=2
@@ -47,7 +47,7 @@ for i in range(0,num_Files):
             NN2horizontal = ((Oatom[0]-Coordinates[j][0])**2+(Oatom[1]-Coordinates[j][1])**2)**(0.5)
             #index = j
     #surface_distances = [Surface_Names[i], vertical/mindistance, horizontal/mindistance, vertical, horizontal, mindistance, index]
-    surface_distances = [Surface_Names[i], mindistance, NN2/mindistances,vertical/mindistance,horizontal/mindistance,NN2,NN2vertical,NN2horizontal,NN2vertical/NN2,NN2horizontal/NN2]    
+    surface_distances = [Surface_Names[i], mindistance, NN2/mindistance,vertical/mindistance,horizontal/mindistance,NN2,NN2vertical,NN2horizontal,NN2vertical/NN2,NN2horizontal/NN2]    
     Distances.append(surface_distances)
         
             
