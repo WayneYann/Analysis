@@ -12,11 +12,11 @@ import csv
 
 
 
-directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\VASP_Files\O_Hollow_Morse\Au111')
+directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\VASP_Files\O_Hollow')
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
 CONTCAR_FILES = [i for i in CONTCAR_FILES if not ('freq' in i)]
-Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\Au111\\","\\CONTCAR")
+Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\O_Hollow\\","\\CONTCAR")
 
 #Repeating surface
 a=2

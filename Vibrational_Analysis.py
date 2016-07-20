@@ -11,7 +11,8 @@ import matplotlib as mat
 import adjustText
 import os
 mat.rcParams['mathtext.default'] = 'regular'
-vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v04.csv')
+mat.rcParams['legend.numpoints'] = 1
+vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v05.csv')
 Metal_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,0:6]
 Data_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,7:]
 Data = np.genfromtxt(vibration_file, delimiter=',')[1:,7:]
@@ -63,28 +64,29 @@ plt.show()
 
 #Plotting Reduced Masses
 plt.figure(1)
-plt.figure(figsize=(16,8),dpi=500)
-plt.plot(vMO,MrH,'or',markersize=12)
-plt.title('Reduced Mass for Hydrogen adsorbed on Metals Calculated from DFT',size=16, fontweight='bold')
-plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
-plt.ylabel('$Mr^{0.5}$ $(g/mol)^{0.5}$',size=20, fontweight='bold')
-plt.xticks(size=16)
-plt.yticks(size=16)
+plt.figure(figsize=(10,10),dpi=500)
+plt.plot(vMO,MrH,'or',markersize=16)
+plt.title('Atomic H on hollow sites: PBE-D3',size=24, fontweight='bold')
+plt.xlabel('v(M-O) $cm^{-1}$',size=24, fontweight='bold')
+plt.ylabel('$Mr^{0.5}$ $(g/mol)^{0.5}$',size=24, fontweight='bold')
+plt.xticks(size=20)
+plt.yticks(size=20)
 mat.rc('text', usetex = True)
 Marker = []
 for i in range(0,len(vMO)):
     Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+    
 mat.rc('text', usetex = False)
 texts = []
 for x, y, s in zip(vMO, MrH, Marker):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts, vMO,MrH,autoalign=True,va='bottom',
-                ha='right',arrowprops=dict(arrowstyle="-", color='k', lw=2))
+                arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
 #Plotting Reduced Masses
 plt.figure(1)
-plt.figure(figsize=(16,8),dpi=500)
+plt.figure(figsize=(10,10),dpi=500)
 plt.plot(vMO,MrN,'og',markersize=12)
 plt.title('Reduced Mass for Nitrogen adsorbed on Metals Calculated from DFT',size=16, fontweight='bold')
 plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
@@ -94,7 +96,7 @@ plt.yticks(size=16)
 mat.rc('text', usetex = True)
 Marker = []
 for i in range(0,len(vMO)):
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+    Marker.append(''.join(Metal_Info[i,0]))
 mat.rc('text', usetex = False)
 texts = []
 for x, y, s in zip(vMO, MrN, Marker):
@@ -105,21 +107,23 @@ plt.show()
 
 #Plotting Reduced Masses
 plt.figure(1)
-plt.figure(figsize=(16,8),dpi=500)
-plt.plot(vMO,MrO,'ob',markersize=12)
-plt.plot(vMO,MrN,'og',markersize=12)
-plt.title('Reduced Mass for Oxygen and Nitrogen adsorbed on Metals Calculated from DFT',size=16, fontweight='bold')
-plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
-plt.ylabel('$Mr^{0.5}$ $(g/mol)^{0.5}$',size=20, fontweight='bold')
+plt.figure(figsize=(12,10),dpi=500)
+plt.plot(vMO,MrO,'ob',markersize=16)
+plt.plot(vMO,MrN,'og',markersize=16)
+plt.title('Atomic O and N on hollow sites: PBE-D3',size=24, fontweight='bold')
+plt.xlabel('v(M-O) $cm^{-1}$',size=24, fontweight='bold')
+plt.ylabel('$Mr^{0.5}$ $(amu)^{0.5}$',size=24, fontweight='bold')
 plt.legend(['Pt-O','Pt-N'],loc=2,prop={'size':20})
-plt.xticks(size=16)
-plt.yticks(size=16)
+plt.xticks(size=20)
+plt.yticks(size=20)
 mat.rc('text', usetex = True)
 Marker = []
 for i in range(0,len(vMO)):
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+    #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+    Marker.append(Metal_Info[i,0])
 for i in range(0,len(vMO)):
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+    #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+    Marker.append(Metal_Info[i,0])
 mat.rc('text', usetex = False)
 texts = []
 
@@ -131,7 +135,8 @@ texts = []
 
 for x, y, s in zip(vM2O,Mr2, Marker):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
-adjustText.adjust_text(texts,autoalign=True)
+adjustText.adjust_text(texts, vMO,MrN,autoalign=True,
+               arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 #PLotting v(M-O) vs v(M-O2)
 
@@ -141,26 +146,30 @@ idx = np.isfinite(vMO) & np.isfinite(vOOatop)
 m2,b2 = np.polyfit(vMO[idx], vOOatop[idx], 1) 
 idx = np.isfinite(vMO) & np.isfinite(vOObridge)
 m3,b3 = np.polyfit(vMO[idx], vOObridge[idx], 1) 
-
+mat.rc('text', usetex = False)
 plt.figure(2)
-plt.figure(figsize=(16,8),dpi=500)
-plt.plot(vMO,vMO2,'o',markersize=12)
-plt.plot(vMO,vOOatop,'o',markersize=12)
-plt.plot(vMO,vOObridge,'o',markersize=12)
-plt.plot(vMO, m1*vMO+b1,'-k')
-plt.plot(vMO, m2*vMO+b2,'-k') 
-plt.plot(vMO, m3*vMO+b3,'-k')
+plt.figure(figsize=(14,8),dpi=500)
+plt.plot(vMO,vMO2,'ob',markersize=16)
+plt.plot(vMO,vOOatop,'^g',markersize=16)
+plt.plot(vMO,vOObridge,'^r',markersize=16)
+plt.plot(np.array([min(vMO),max(vMO)]), m1*np.array([min(vMO),max(vMO)])+b1,'--b',lw=4)
+plt.plot(np.array([min(vMO),max(vMO)]), m2*np.array([min(vMO),max(vMO)])+b2,'--g',lw=4) 
+plt.plot(np.array([min(vMO),max(vMO)]), m3*np.array([min(vMO),max(vMO)])+b3,'--r',lw=4)
 #plt.title('Experimental frequencies in adsorbed O2 vs O',size=12, fontweight='bold')
-plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
-plt.ylabel('v(M-O2) and v(O-O) $cm^{-1}$',size=20, fontweight='bold')
-plt.legend(['v(M-O2): %sx+%s' %(round(m1,2),round(b1,2)), \
-'v(O-O) atop: %sx+%s' %(round(m2,2),round(b2,2)) ,\
-'v(O-O) bridge: %sx+%s' %(round(m3,2),round(b3,2))],loc=2,prop={'size':20})
-plt.xticks(size=16)
-plt.yticks(size=16)
+#mat.rc('text', usetex = True)
+#plt.xlabel(r'\textbf{time}',size=28)
+mat.rc('text', usetex=False)
+#matplotlib.rcParams['text.latex.preamble'] = [r'\boldmath']
+plt.xlabel(r'$\mathbf{\nu}_{\perp}(M-O)$ [$cm^{-1}$]',size=28)
+mat.rc('text', usetex = False)
+plt.ylabel(r'$\mathbf{\nu}_{\perp}(M-O_{2})$ and (O-O) [$cm^{-1}$]',size=28)
+plt.legend([r'$\mathbf{\nu}_{\perp}(M-O_{2}$): %sx+%s' %(round(m1,2),int(round(b1,2))), \
+'(O-O) site 1: %sx+%s' %(round(m2,2),int(round(b2,2))) ,\
+'(O-O) site 2: %sx+%s' %(round(m3,2),int(round(b3,2)))],loc=2,prop={'size':20})
+plt.xticks(size=24)
+plt.yticks(size=24)
 
-
-mat.rc('text', usetex = True)
+mat.rc('text', usetex = False)
 Marker = []
 
 
@@ -169,33 +178,29 @@ idxvOOatop = np.isfinite(vOOatop)
 idxvOObridge = np.isfinite(vOObridge)
 #vMOs = np.concatenate((vMO[idxvMO2],vMO[idxvOOatop],vMO[idxvOObridge]))
 #vMO2s = np.concatenate((vMO2[idxvMO2],vOOatop[idxvOOatop],vOObridge[idxvOObridge]))
-vMOs = vMO[idxvMO2]
-vMO2s = vMO2[idxvMO2]
+vMOs = np.concatenate((vMO,vMO,vMO))
+vMO2s = np.concatenate((vMO2,vOOatop,vOObridge))
 
-for i in [i for i, x in enumerate(idxvMO2) if x]:
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,31])).rstrip('.0')+'}}$'))
-'''
-for i in [i for i, x in enumerate(idxvOOatop) if x]:
-    #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+','+str(round(Data[i,31])).rstrip('.0')+'}}$'))
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,34])).rstrip('.0')+'}}$'))
-for i in [i for i, x in enumerate(idxvOObridge) if x]:
-    #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+','+str(round(Data[i,31])).rstrip('.0')+'}}$'))
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,37])).rstrip('.0')+'}}$'))
-'''
+for i in [i for i, x in enumerate(vMO2) if x]:
+    Marker.append(Metal_Info[i,0])
+for i in [i for i, x in enumerate(vOOatop) if x]:
+    Marker.append(Metal_Info[i,0])
+for i in [i for i, x in enumerate(vOObridge) if x]:
+    Marker.append(Metal_Info[i,0])
 mat.rc('text', usetex = False)
 
-mat.rc('text', usetex = False)
 texts = []
-for x, y, s in zip(vMOs, vMO2s, Marker):
-    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+
+idx = np.isfinite(vMO2s)
+
+for x, y, s in zip(vMOs[idx], vMO2s[idx], np.array(Marker)[idx]):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=22, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
         arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
 #Plotting parallel vibrations
-vMHhor = []
-NN = Data[:,0]
-Ms = Data[:,2]
+
 cosa = Data[:,63]
 sina = Data[:,64]
 ON2overN = Data[:,65]
@@ -284,22 +289,22 @@ adjustText.adjust_text(texts,autoalign=True)
 plt.show
 
 #Calculating Entropy
-SvRO = h/kB/T*(c*vMO*1/(np.exp(h/kB/T*c*vMO)-1)-np.log(1-np.exp(-1*h*c*vMO/kB/T)) \
-+ c*vMOhor*1/(np.exp(h/kB/T*c*vMOhor)-1)-np.log(1-np.exp(-1*h*c*vMOhor/kB/T)) \
-+ c*vMOhor*1/(np.exp(h/kB/T*c*vMOhor)-1)-np.log(1-np.exp(-1*h*c*vMOhor/kB/T)) \
+SvRO = (h/kB/T*c*vMO*1/(np.exp(h/kB/T*c*vMO)-1)-np.log(1-np.exp(-1*h*c*vMO/kB/T)) \
++ h/kB/T*c*vMOhor*1/(np.exp(h/kB/T*c*vMOhor)-1)-np.log(1-np.exp(-1*h*c*vMOhor/kB/T)) \
++ h/kB/T*c*vMOhor*1/(np.exp(h/kB/T*c*vMOhor)-1)-np.log(1-np.exp(-1*h*c*vMOhor/kB/T)) \
 )
 
-SvROpredicted = h/kB/T*(c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
+SvROpredicted = (h/kB/T*c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
 )
 
-SvRO2atop = h/kB/T*(c*vMO2*1/(np.exp(h/kB/T*c*vMO2)-1)-np.log(1-np.exp(-1*h*c*vMO2/kB/T)) \
-+ c*vOOatop*1/(np.exp(h/kB/T*c*vOOatop)-1)-np.log(1-np.exp(-1*h*c*vOOatop/kB/T)) \
+SvRO2atop = (h/kB/T*c*vMO2*1/(np.exp(h/kB/T*c*vMO2)-1)-np.log(1-np.exp(-1*h*c*vMO2/kB/T)) \
++ h/kB/T*c*vOOatop*1/(np.exp(h/kB/T*c*vOOatop)-1)-np.log(1-np.exp(-1*h*c*vOOatop/kB/T)) \
 )
 
-SvRO2bridge = h/kB/T*(c*vMO2*1/(np.exp(h/kB/T*c*vMO2)-1)-np.log(1-np.exp(-1*h*c*vMO2/kB/T)) \
-+ c*vOObridge*1/(np.exp(h/kB/T*c*vOObridge)-1)-np.log(1-np.exp(-1*h*c*vOObridge/kB/T)) \
+SvRO2bridge = (h/kB/T*c*vMO2*1/(np.exp(h/kB/T*c*vMO2)-1)-np.log(1-np.exp(-1*h*c*vMO2/kB/T)) \
++ h/kB/T*c*vOObridge*1/(np.exp(h/kB/T*c*vOObridge)-1)-np.log(1-np.exp(-1*h*c*vOObridge/kB/T)) \
 )
 
 idx = np.isfinite(vMO) & np.isfinite(vMO2)
@@ -311,29 +316,29 @@ p3 = np.polyfit(vMO[idx], vOObridge[idx], 1)
 vMO2lin = p1[0]*vMOx+p1[1]
 vOOatoplin = p2[0]*vMOx+p2[1]
 vOObridgelin = p3[0]*vMOx+p3[1]
-SvRO2atoplin = h/kB/T*(c*vMO2lin*1/(np.exp(h/kB/T*c*vMO2lin)-1)-np.log(1-np.exp(-1*h*c*vMO2lin/kB/T)) \
-+ c*vOOatoplin*1/(np.exp(h/kB/T*c*vOOatoplin)-1)-np.log(1-np.exp(-1*h*c*vOOatoplin/kB/T)) \
+SvRO2atoplin = (h/kB/T*c*vMO2lin*1/(np.exp(h/kB/T*c*vMO2lin)-1)-np.log(1-np.exp(-1*h*c*vMO2lin/kB/T)) \
++ h/kB/T*c*vOOatoplin*1/(np.exp(h/kB/T*c*vOOatoplin)-1)-np.log(1-np.exp(-1*h*c*vOOatoplin/kB/T)) \
 )
 
-SvRO2bridgelin = h/kB/T*(c*vMO2lin*1/(np.exp(h/kB/T*c*vMO2lin)-1)-np.log(1-np.exp(-1*h*c*vMO2lin/kB/T)) \
-+ c*vOObridgelin*1/(np.exp(h/kB/T*c*vOObridgelin)-1)-np.log(1-np.exp(-1*h*c*vOObridgelin/kB/T)) \
+SvRO2bridgelin = (h/kB/T*c*vMO2lin*1/(np.exp(h/kB/T*c*vMO2lin)-1)-np.log(1-np.exp(-1*h*c*vMO2lin/kB/T)) \
++ h/kB/T*c*vOObridgelin*1/(np.exp(h/kB/T*c*vOObridgelin)-1)-np.log(1-np.exp(-1*h*c*vOObridgelin/kB/T)) \
 )
 
 #Plotting vibrations and Oxygen Entropy
 T=298
-SvRO298 = h/kB/T*(c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
+SvRO298 = (h/kB/T*c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
 )
 T=200
-SvRO200 = h/kB/T*(c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
+SvRO200 = (h/kB/T*c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
 )
 T=400
-SvRO400 = h/kB/T*(c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
-+ c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
+SvRO400 = (h/kB/T*c*vMOx*1/(np.exp(h/kB/T*c*vMOx)-1)-np.log(1-np.exp(-1*h*c*vMOx/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
++ h/kB/T*c*vMOparax*1/(np.exp(h/kB/T*c*vMOparax)-1)-np.log(1-np.exp(-1*h*c*vMOparax/kB/T)) \
 )
 plt.figure(6)
 plt.figure(figsize=(16,10),dpi=500)
@@ -639,22 +644,217 @@ adjustText.adjust_text(texts,only_move={'points':'y','text':'y'},autoalign=True,
         arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
+#PLotting v(M-O) vs v(M-OH)
+import matplotlib as mat
+mat.rcParams['mathtext.default'] = 'regular'
+mat.rcParams['lines.linewidth'] = 3
+mat.rcParams['lines.markersize'] = 6
+vMOv54 = Data[:,73]
+vMOHv54 = Data[:,77]
+idx = np.isfinite(vMOv54) & np.isfinite(vMOHv54)
+idxvMOH = np.isfinite(vMOHv54)
+vMOs = vMOv54[idxvMOH]
+vMOHs = vMOHv54[idxvMOH]
+p = np.polyfit(vMOv54[idx], vMOHv54[idx], 1) 
+m1 = p[0]
+b1=p[1]
+
+plt.figure(4)
+plt.figure(figsize=(10,10),dpi=500)
+plt.plot(vMOs, m1*vMOs+b1,'--b')
+plt.plot(vMOv54,vMOHv54,'o',markersize=12)
+plt.title('v(M-OHx) on 111-fcc sites: PBE-D3',size=20, fontweight='bold')
+plt.xlabel('v(M-O) $cm^{-1}$',size=20, fontweight='bold')
+plt.ylabel('v(M-OH) $cm^{-1}$',size=20, fontweight='bold')
+plt.legend(['v(M-OH): y=%sx+%s \n $R^{2}$=0.98' %(round(m1,3),round(b1,2))],loc=2,prop={'size':20})
+plt.xticks(size=16)
+plt.yticks(size=16)
+
+
+mat.rc('text', usetex = True)
 
 
 
+idxvMOH = np.isfinite(vMOHv54)
+vMOs = vMOv54[idxvMOH]
+vMOHs = vMOHv54[idxvMOH]
+Marker = []
+for i in [i for i, x in enumerate(idxvMOH) if x]:
+    Marker.append(''.join(Metal_Info[i,2]))
+mat.rc('text', usetex = False)
 
-#for i, txt in enumerate(Metal_Info[:,0]):
-#    plt.annotate(txt, (vMO[i],Mr[i]), xytext = (-10, 10),
-#        textcoords = 'offset points',ha = 'right', va = 'bottom',
-#        bbox = dict(boxstyle = 'round,pad=0.5', fc = 'green', alpha = 0.5),
-#        arrowprops = dict(arrowstyle = '->'))
-        
-#plt.get_current_fig_manager().window.raise_()
-'''
-vMO2 = []
-Mr2 = []
-for i in range(0,len(vMO)):
-    if  ~np.isnan(vMO[i]) and ~np.isnan(Mr[i]):
-        vMO2.append(vMO[i])
-        Mr2.append(Mr[i])
-'''
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(vMOs, vMOHs, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
+        arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+
+#PLotting Eads (M-O) vs Eads (M-OH)
+EMOv54 = Data[:,71]
+EMOHv54 = Data[:,75]
+idx = np.isfinite(EMOv54) & np.isfinite(EMOHv54)
+idxEMOH = np.isfinite(EMOHv54)
+EMOs = EMOv54[idxEMOH]
+EMOHs = EMOHv54[idxEMOH]
+p = np.polyfit(EMOv54[idx], EMOHv54[idx], 1) 
+m1 = p[0]
+b1=p[1]
+
+plt.figure(4)
+plt.figure(figsize=(10,10),dpi=500)
+plt.plot(np.array([np.min(EMOs),np.max(EMOs)]), m1*np.array([np.min(EMOs),np.max(EMOs)])+b1,'--b')
+plt.plot(EMOv54,EMOHv54,'o',markersize=12)
+plt.title('Electronic ${\Delta}$E$_{ads}$ (M-OHx) on 111-fcc sites: PBE-D3',size=20, fontweight='bold')
+plt.xlabel('${\Delta}$E$_{ads}$ atomic O (eV)',size=20, fontweight='bold')
+plt.ylabel('${\Delta}$E$_{ads}$ OH (eV)',size=20, fontweight='bold')
+plt.legend(['${\Delta}$E$_{ads}$ (M-OH): y=%sx+%s \n $R^{2}$=0.85' %(round(m1,3),round(b1,2))],loc=2,prop={'size':20})
+plt.xticks(size=16)
+plt.yticks(size=16)
+
+
+mat.rc('text', usetex = True)
+
+Marker = []
+for i in [i for i, x in enumerate(idxEMOH) if x]:
+    Marker.append(''.join(Metal_Info[i,2]))
+mat.rc('text', usetex = False)
+
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(EMOs, EMOHs, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
+        arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+
+#PLotting Eads (M-O) vs Eads (M-O2)
+EMOv54 = Data[:,71]
+EMO2v54 = Data[:,81]
+idx = np.isfinite(EMOv54) & np.isfinite(EMO2v54)
+idxEMO2 = np.isfinite(EMO2v54)
+EMOs = EMOv54[idxEMO2]
+EMO2s = EMO2v54[idxEMO2]
+p = np.polyfit(EMOv54[idx], EMO2v54[idx], 1) 
+m1 = p[0]
+b1=p[1]
+
+plt.figure(5)
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(np.array([np.min(EMOs),np.max(EMOs)]), m1*np.array([np.min(EMOs),np.max(EMOs)])+b1,'--b')
+plt.plot(EMOv54,EMO2v54,'o',markersize=12)
+plt.title('Electronic ${\Delta}$E$_{ads}$ O$_{2}$ on tbt and O on fcc sites: PBE-D3 and 111 FCC metals',size=20, fontweight='bold')
+plt.xlabel('${\Delta}$E$_{ads}$ atomic O (eV)',size=20, fontweight='bold')
+plt.ylabel('${\Delta}$E$_{ads}$ O2 (eV)',size=20, fontweight='bold')
+plt.legend(['${\Delta}$E$_{ads}$ (M-O2): y=%sx+%s \n $R^{2}$=1' %(round(m1,3),round(b1,2))],loc=2,prop={'size':20})
+plt.xticks(size=16)
+plt.yticks(size=16)
+
+
+mat.rc('text', usetex = True)
+
+Marker = []
+for i in [i for i, x in enumerate(idxEMO2) if x]:
+    Marker.append(''.join(Metal_Info[i,2]))
+mat.rc('text', usetex = False)
+
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(EMOs, EMO2s, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=25, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
+        arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+
+#PLotting Eads (M-O) vs frequency
+vMOv54 = Data[:,74]
+EMOv54 = Data[:,71]
+idx = np.isfinite(EMOv54) & np.isfinite(vMOv54)
+
+idxvMO = np.isfinite(vMOv54)
+idxvMO[3]=False
+EMOs = EMOv54[idxvMO]
+vMOs = vMOv54[idxvMO]
+p = np.polyfit(EMOv54[idx], vMOv54[idx], 1) 
+m1 = p[0]
+b1=p[1]
+idx = np.isfinite(EMOv54) & np.isfinite(vMO)
+idx[3]=False
+p = np.polyfit(EMOv54[idx], vMO[idx], 1) 
+m2 = p[0]
+b2=p[1]
+plt.figure(6)
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(np.array([np.min(EMOs),np.max(EMOs)]), m1*np.array([np.min(EMOs),np.max(EMOs)])+b1,'--b')
+plt.plot(np.array([np.min(EMOs),np.max(EMOs)]), m2*np.array([np.min(EMOs),np.max(EMOs)])+b2,'--g')
+plt.plot(EMOv54,vMOv54,'bo',markersize=12)
+plt.plot(EMOv54,vMO,'go',markersize=12)
+plt.title('Linear Trend for Experimental and Calculated Frequencies: PBE-D3 and 111 FCC metals',size=20, fontweight='bold')
+plt.xlabel('${\Delta}$E$_{ads}$ atomic O (eV)',size=20, fontweight='bold')
+plt.ylabel('v(M-O) (cm$^{-1}$)',size=20, fontweight='bold')
+plt.legend(['PBE-D3: y=%sx+%s \n $R^{2}$=0.93' %(round(m1,3),round(b1,2)),
+            'Experiment: y=%sx+%s \n $R^{2}$=0.90' %(round(m2,3),round(b2,2))],loc=1,prop={'size':20})
+plt.xticks(size=16)
+plt.yticks(size=16)
+plt.xlim(-5.5, -3)
+
+mat.rc('text', usetex = True)
+
+Marker = []
+for i in [i for i, x in enumerate(idxvMO) if x]:
+    Marker.append(''.join(Metal_Info[i,2]))
+mat.rc('text', usetex = False)
+
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(EMOs, vMOs, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=25, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
+        arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+
+#PLotting Eads (M-O) vs bond distance
+EMOv54 = Data[:,71]
+EMOHv54 = Data[:,75]
+rOinv2 = Data[:,79]
+rOHinv2 = Data[:,80]
+idx = np.isfinite(EMOv54) & np.isfinite(EMOHv54)
+idxvMO = np.isfinite(rOHinv2)
+EMOs = EMOv54[idxvMO]
+EMOHs = EMOHv54[idxvMO]
+rOandOH = np.concatenate((rOinv2[idxvMO],rOHinv2[idxvMO]))
+EOandOH = np.concatenate((EMOs,EMOHs))
+vM2O = np.concatenate((vMO,vMO))
+p = np.polyfit(EOandOH, rOandOH, 1) 
+m1 = p[0]
+b1=p[1]
+
+plt.figure(6)
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(np.array([np.min(EOandOH),np.max(EOandOH)]), m1*np.array([np.min(EOandOH),np.max(EOandOH)])+b1,'--k')
+plt.plot(EMOv54,rOinv2,'bo',markersize=12)
+plt.plot(EMOHv54,rOHinv2,'go',markersize=12)
+plt.title('Scaling of Inverse Bond Distance Squared: PBE-D3 and 111 FCC metals',size=20, fontweight='bold')
+plt.xlabel('${\Delta}$E$_{ads}$ (eV)',size=20, fontweight='bold')
+plt.ylabel('1/r$_{L}$$^{2}$ (A$_{-2}$)',size=20, fontweight='bold')
+plt.legend(['Fit: y=%sx+%s \n $R^{2}$=0.89' %(round(m1,3),round(b1,2)),
+            'M-O','M-OH'],loc=1,prop={'size':20})
+plt.xticks(size=16)
+plt.yticks(size=16)
+
+mat.rc('text', usetex = True)
+
+Marker = []
+for i in [i for i, x in enumerate(idxvMO) if x]:
+    Marker.append(''.join(Metal_Info[i,2]))
+for i in [i for i, x in enumerate(idxvMO) if x]:
+    Marker.append(''.join(Metal_Info[i,2]))
+mat.rc('text', usetex = False)
+texts = []
+for x, y, s in zip(EOandOH, rOandOH, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=25, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
+        arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+
