@@ -19,8 +19,9 @@ Data = np.genfromtxt(vibration_file, delimiter=',')[1:,7:]
 Metal_Info = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[1:,0:6]
 
 #Calculating reduced mass
-MassO = 16
 MassH = 1.00794
+MassO = 16
+MassN = 14
 vMO = Data[:,8]
 vMO2 = Data[:,29]
 vOOatop = Data[:,32]
@@ -34,12 +35,13 @@ Dband = Data[:,53]
 DataLabels = []
 vMH = Data[:,54]
 vMHhorlit = Data[:,55]
+massM = Data[:,2]
 for i in range(0,len(Data_Labels)):
     DataLabels.append(Data_Labels[i])
     DataLabels.append(i)
-MrO = (1/MassO+1/(Data[:,0]*Data[:,2]*Data[:,3]**2))**(-0.5)
-MrH = (1/MassH+1/(Data[:,0]*Data[:,2]*Data[:,63]**2))**(-0.5)
-MrN = (1/14+1/(Data[:,0]*Data[:,2]*Data[:,61]**2))**(-0.5)
+MrO = (1/MassO+1/(Data[:,0]*massM*Data[:,3]**2))**(-0.5)
+MrH = (1/MassH+1/(Data[:,0]*massM*Data[:,63]**2))**(-0.5)
+MrN = (1/MassN+1/(Data[:,0]*massM*Data[:,61]**2))**(-0.5)
 
 #Plotting Reduced Masses
 plt.figure(1)
@@ -107,13 +109,14 @@ plt.show()
 
 #Plotting Reduced Masses
 plt.figure(1)
-plt.figure(figsize=(12,10),dpi=500)
-plt.plot(vMO,MrO,'ob',markersize=16)
-plt.plot(vMO,MrN,'og',markersize=16)
-plt.title('Atomic O and N on hollow sites: PBE-D3',size=24, fontweight='bold')
-plt.xlabel('v(M-O) $cm^{-1}$',size=24, fontweight='bold')
-plt.ylabel('$Mr^{0.5}$ $(amu)^{0.5}$',size=24, fontweight='bold')
-plt.legend(['Pt-O','Pt-N'],loc=2,prop={'size':20})
+plt.figure(figsize=(16,8),dpi=500)
+plt.plot(massM,MrO**2,'ob',markersize=16)
+plt.plot(massM,MrN**2,'og',markersize=16)
+plt.plot(massM,MrH**2,'or',markersize=16)
+#plt.title('Atomic O and N on hollow sites: PBE-D3',size=24, fontweight='bold')
+plt.xlabel('Metal Mass $(amu)$',size=24, fontweight='bold')
+plt.ylabel('$Mr$ $(amu)$',size=24, fontweight='bold')
+plt.legend(['O','N','H'],loc=2,prop={'size':20})
 plt.xticks(size=20)
 plt.yticks(size=20)
 mat.rc('text', usetex = True)
@@ -124,17 +127,20 @@ for i in range(0,len(vMO)):
 for i in range(0,len(vMO)):
     #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
     Marker.append(Metal_Info[i,0])
+for i in range(0,len(vMO)):
+    #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0'))+'}}$')
+    Marker.append(Metal_Info[i,0])
 mat.rc('text', usetex = False)
 texts = []
 
                 
-Mr2 = np.concatenate((MrO,MrN))
-vM2O = np.concatenate((vMO,vMO))
+Mr2 = np.concatenate((MrO**2,MrN**2,MrH**2))
+M2O = np.concatenate((massM,massM,massM))
 
 texts = []
 
-for x, y, s in zip(vM2O,Mr2, Marker):
-    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
+for x, y, s in zip(M2O,Mr2, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=18, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts, vMO,MrN,autoalign=True,
                arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()

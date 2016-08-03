@@ -13,7 +13,7 @@ import os
 from scipy.interpolate import interp1d
 mat.rcParams['mathtext.default'] = 'regular'
 mat.rcParams['lines.linewidth'] = 3
-mat.rcParams['lines.markersize'] = 16
+mat.rcParams['lines.markersize'] = 20
 mat.rcParams['legend.numpoints'] = 1
 vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v05.csv')
 Metal_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,0:6]
@@ -166,7 +166,8 @@ R2H = 1 - sum((fGH(vMH[idxH])-GibbsvibH[idxH])**2)/sum((fGH(vMH[idxH])-np.mean(G
 """Plotting Combined Gibbs Energy (Contribution from vibrations)"""
 
 plt.figure(1)
-plt.figure(figsize=(18,10),dpi=500)
+#plt.figure(figsize=(18,10),dpi=500)
+plt.figure(figsize=(14,8))
 plt.plot(vMOx,GibbsvibOfit,'-b')
 plt.plot(vMNx,GibbsvibNfit,'-g')
 plt.plot(vMHx,GibbsvibHfit,'-r')
@@ -177,20 +178,20 @@ plt.plot(vMN,GibbsvibN,'og')
 plt.plot(vMH,GibbsvibH,'or')
 
 #plt.title('The Scaling of M-O Entropy',size=12, fontweight='bold')
-plt.xlabel('Perependicular Frequency $cm^{-1}$',size=24, fontweight='bold')
-plt.ylabel('G$_{vib}$ (eV)',size=24, fontweight='bold')
+plt.xlabel('Perependicular Frequency [$cm^{-1}$]',size=24, fontweight='bold')
+plt.ylabel('G$_{vib}$ [eV]',size=24, fontweight='bold')
 #plt.title('Atomic Oxygen',size=20, fontweight='bold')
-plt.legend(['O: R$^{2}$ = %.2f' %(R2O),'N: R$^{2}$ = %.2f' %(R2N),'H: R$^{2}$ = %.2f' %(R2H)],loc=2,prop={'size':20})
+plt.legend(['O: R$^{2}$ = %.2f' %(R2O),'N: R$^{2}$ = %.2f' %(R2N),'H: R$^{2}$ = %.2f' %(R2H)],loc=2,prop={'size':24})
 plt.xticks(size=20)
 plt.yticks(size=20)
 
 Marker = []
 for i in range(0,len(vMO)):
-    Marker.append(''.join(Metal_Info[i,2]+'${^{'+str(round(Data[i,10])).rstrip('.0')+'}}$'))
+    Marker.append(Metal_Info[i,0])
 for i in range(0,len(vMN)):
-    Marker.append(''.join(Metal_Info[i,2]+'${^{'+str(round(Data[i,43])).rstrip('.0')+'}}$'))
+    Marker.append(Metal_Info[i,0])
 for i in range(0,len(vMH)):
-    Marker.append(''.join(Metal_Info[i,2]+'${^{'+str(round(Data[i,60])).rstrip('.0')+'}}$'))
+    Marker.append(Metal_Info[i,0])
 mat.rc('text', usetex = False)
 texts = []
 vM = np.concatenate((vMO,vMN,vMH))
@@ -200,9 +201,9 @@ vM = vM[idx]
 Gibbsvib = Gibbsvib[idx]
 Marker = np.array(Marker)[idx]
 for x, y, s in zip(vM, Gibbsvib, Marker):
-    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=16, fontweight='bold',style='normal',name ='Calibri'))
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=24, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
-plt.show
+plt.show()
 
 """Plotting Gibbs Energy oxygen (Contribution from vibrations)"""
 plt.figure(1)
@@ -231,7 +232,7 @@ texts = []
 for x, y, s in zip(vMO, Gibbsvib, Marker):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
-plt.show
+plt.show()
 
 """Plotting Gibbs Energy Nitrogen (Contribution from vibration) """
 plt.figure(2)
@@ -260,7 +261,7 @@ texts = []
 for x, y, s in zip(vMN, Gibbsvib, Marker):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
-plt.show
+plt.show()
 
 """Plotting Gibbs Energy Hydrogen (Contribution from vibration) """
 plt.figure(3)
@@ -289,4 +290,4 @@ texts = []
 for x, y, s in zip(vMH, Gibbsvib, Marker):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
-plt.show
+plt.show()

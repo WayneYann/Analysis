@@ -13,7 +13,7 @@ import numpy as np
 
 
 
-directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\VASP_Files\VASP_Ad_v02')
+directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\VASP_Files\VASP_Ad_v04')
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
 OSZICAR_FILES = Text_Parse.list_contains(full_file_paths,"OSZICAR")
@@ -21,15 +21,18 @@ freq_FILES = Text_Parse.list_contains(full_file_paths,"freq")
 CONTCAR_FILES = [i for i in CONTCAR_FILES if not ('Free_Surfaces' in i)]
 OSZICAR_FILES = [i for i in OSZICAR_FILES if not ('Free_Surfaces' in i)]
 OSZICAR_FILES = [i for i in OSZICAR_FILES if not ('Free_Surfaces' in i)]
-Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\VASP_Ad_v02\\","_CONTCAR")
+Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\VASP_Ad_v04\\","_CONTCAR")
 Free_Surfaces = Text_Parse.list_contains(full_file_paths,"Free_Surfaces")
 Free_Surfaces = [i for i in Free_Surfaces if ('OSZICAR' in i)]
 #Repeating surface
 repeatX=2
 repeatY=2
 
-Data = [['Surface', 'Substrate','Substrate Mass', 'NN','NN2','Adsorbate','Adsorbate mass','cos(alpha)','sin(alpha)', 'Mr','Zfrequency','frequency_corrected','Energy','Surface_Energy','Eads']]
+Data = [['Surface', 'Substrate','Adsorbate','Substrate Mass', 'NN','mindistance','NN2','Adsorbate mass','cos(alpha)','sin(alpha)', 'Mr','Zfrequency','frequency_corrected','Energy','Surface_Energy','Eads']]
 num_Files = len(Surface_Names)
+c = 29979245800 #cm/s
+JeV = 1.60217653*10**(-19) #eV to Joules
+NA = 6.0221409*10**(23)
 for i in range(0,num_Files):
     ASE_CONTCAR = read(CONTCAR_FILES[i])
     numAtoms = len(ASE_CONTCAR)
@@ -44,9 +47,30 @@ for i in range(0,num_Files):
     Substrate_Mass = ASE_CONTCAR[0].mass
     Adsorbate = ''
     Adsorbate_Mass = 0
+    
     for j in range(0,numAdsorbates):
         Adsorbate = (Adsorbate+ASE_CONTCAR[-1*numAdsorbates+j].symbol)
         Adsorbate_Mass = (Adsorbate_Mass+ASE_CONTCAR[-1*numAdsorbates+j].mass)
+    if Adsorbate == 'C':
+        Egas = -1.3953603
+    elif Adsorbate == 'CH':
+        Egas = -6.2283107
+    elif Adsorbate == 'CHH':
+        Egas = -12.137645
+    elif Adsorbate == 'O':
+        Egas = -1.9555224
+    elif Adsorbate == 'OH':
+        Egas = -7.7312472
+    elif Adsorbate == 'OHH':
+        Egas = -14.160252
+    elif Adsorbate == 'N':
+        Egas = -3.1718078
+    elif Adsorbate == 'NH':
+        Egas = -8.1413821
+    elif Adsorbate == 'NHH':
+        Egas = -13.541416
+    elif Adsorbate == 'H':
+        Egas =-1.2065081   
     ASE_CONTCAR.set_constraint()
     ASE_CONTCAR2 = ASE_CONTCAR.repeat((repeatX,repeatY,1))  
     Coordinates = ASE_CONTCAR2.positions
@@ -87,13 +111,12 @@ for i in range(0,num_Files):
     elif Surface =='111':
         NN = 3
         NN2 = 3
-    Mr = (1/Adsorbate_Mass+1/(NN*Substrate_Mass*cosa**2+(mindistance/NN2min)**2*NN2*Substrate_Mass*NN2cosa**2))**(-1)
+    Mr = (1/Adsorbate_Mass+1/(NN*Substrate_Mass*cosa**2))**(-1)
     Frequencies = Text_Parse.file2listflex(freq_FILES[i],[58,61],'cm-1',46,57)
     Frequencies = Text_Parse.string2float(Frequencies)
     Eigenvector = Text_Parse.file2listfixed(freq_FILES[i],0,10**6,0,None)
     Eigenvector = Text_Parse.list_split(Eigenvector,' ')
     Eigenvector = Text_Parse.string2float(Eigenvector)
-    Eigenvector = Eigenvector[0:(2+numAtoms)*3*numAdsorbates]
     newEigen = []
     for j in range(0,len(Eigenvector)):
         if len(Eigenvector[j]) == 6:
@@ -108,9 +131,14 @@ for i in range(0,num_Files):
     Zfrequency = 0
     if len(Frequencies) == numAdsorbates*3:
         for j in range(0,numAdsorbates*3):
-            if abs(Eigenvector[j][5]) - abs(Eigenvector[j][4]) - abs(Eigenvector[j][3]) > maxval:
+            val = 0
+            sign=0
+            for k in range(0,numAdsorbates):
+                val = np.array(Eigenvector[(numAdsorbates*j+k)]) + val
+                sign = np.sign(Eigenvector[(numAdsorbates*j+k)][5]) + sign
+            if (abs(val[5]) - abs(val[4]) - abs(val[3])) > maxval and abs(sign) == numAdsorbates:
                 Zfrequency = Frequencies[j]
-                maxval = abs(Eigenvector[j][5]) - abs(Eigenvector[j][4]) - abs(Eigenvector[j][3])
+                maxval = abs(val[5]) - abs(val[4]) - abs(val[3])
 
     Energy = Text_Parse.file2listflex(OSZICAR_FILES[i],23,['E'],27,42)
     Energy = Text_Parse.list_split(Energy," ")
@@ -128,12 +156,15 @@ for i in range(0,num_Files):
     if len(Surface_Energy) > 0:
         Surface_Energy=Surface_Energy[-1]
         Surface_Energy = Surface_Energy[0]
+    De = -1*(Energy-Surface_Energy-Egas)
+    a = (2*np.pi)*Zfrequency/c*((10**(-3)*Adsorbate_Mass/NA)/(2*De*JeV))**0.5*10**(10)
+    Mr = (1/Adsorbate_Mass+1/(NN*Substrate_Mass*cosa**2+(mindistance/NN2min)**6*NN2*Substrate_Mass*NN2cosa**2))**(-1)
     frequency_corrected = Zfrequency*(Adsorbate_Mass/Mr)**0.5
-    data = [Surface, Substrate, Substrate_Mass, NN, NN2, Adsorbate, Adsorbate_Mass,cosa,sina, Mr, Zfrequency,frequency_corrected,Energy, Surface_Energy,Energy-Surface_Energy]    
+    data = [Surface, Substrate, Adsorbate, Substrate_Mass, NN, mindistance,NN2, Adsorbate_Mass,cosa,sina, Mr, Zfrequency,frequency_corrected,Energy, Surface_Energy,Energy-Surface_Energy-Egas]    
     Data.append(data)
         
 myfile = open('Energy_Frequency_Data.csv', 'wb')
 wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-for i in range(0,len(Data)):
-    wr.writerow(Data[i])
+for j in range(0,len(Data)):
+    wr.writerow(Data[j])
 myfile.close()
