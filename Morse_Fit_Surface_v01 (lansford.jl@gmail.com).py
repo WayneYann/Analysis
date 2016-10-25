@@ -15,12 +15,12 @@ from ase.io import read
 
 #Input parameters
 #Directory = 'O2_Ontops/Vertical'
-Directory = 'O_Hollow_Morse'
+Directory = 'Jellium/Al'
 #Directory = 'O_Hollow_RPBE_noD'
-Folder = 'Pt111'
-numAdsorbates = 1
+Folder = 'O111'
+numAdsorbates = 3
 mAdsorbate = 16
-mMetal = 195
+mMetal = 27
 NN=3
 
 
@@ -36,13 +36,13 @@ mH = 1.6737236*10**(-27) #kg
 m1 = mAdsorbate*mH
 m2 = 1000000*mH
 mu = m1*m2/(m1+m2) #kg
-directory=os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research//VASP_Files/%s/%s' % (Directory,Folder))
+directory=os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/VASP_Files/%s/%s' % (Directory,Folder))
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
 CONTCAR_FILES = [i for i in CONTCAR_FILES if not ('freq' in i)]
 OSZICAR_FILES = Text_Parse.list_contains(full_file_paths,"OSZICAR")
 OSZICAR_FILES = [i for i in OSZICAR_FILES if not ('freq' in i)]
-File_Names = Text_Parse.between_values(CONTCAR_FILES,"%s\\" % Folder,"\\CONTCAR")
+File_Names = Text_Parse.between_values(CONTCAR_FILES,"%s" % Directory,"CONTCAR")
 
 #labels1212 = np.genfromtxt('./Lansford_Stats_HW3_data/12.12.csv', delimiter=',', dtype=str)[0,:]
 #data1212 = np.genfromtxt('C:\Users\Josh\Desktop\XSD files', delimiter=',')[1:,:]
@@ -95,20 +95,20 @@ eVperwave = 1.23981*10**(-4)
 #Full fit
 plt.figure(figsize=(7,5),dpi=500)
 
-idx = (Distances-mindistance<1.5)
-Distances = Distances[idx]
-Energies=Energies[idx]
+#idx = (Distances-mindistance<3)*(Distances-mindistance>-0.7)
+#Distances = Distances[idx]
+#Energies=Energies[idx]
 
-ppot, pcov = curve_fit(func,Distances,Energies,p0=np.array([3.2,10,mindistance]),maxfev = 5000)
+ppot, pcov = curve_fit(func,Distances,Energies,p0=np.array([3.2,0.8,mindistance]),maxfev = 5000)
 De = ppot[0]
 a = ppot[1]
 re=ppot[2]
 Distance_sorted = np.linspace(min(Distances),max(Distances),50)
 Energy_fitted = func(Distance_sorted,De,a,re)
 plt.plot(Distances,Energies,'o',Distance_sorted,Energy_fitted)
-plt.title('v(Pt-O$_{2}$) Frequency on 111-Hollow Site: PBE-D3',size=14, fontweight='bold')
+plt.title('(Pt-O) Energy on 111-Hollow Site: PBE-D3',size=14, fontweight='bold')
 plt.ylabel('Potential Energy (eV)',size=14, fontweight='bold')
-plt.xlabel('Vertical Bond distance (A)',size=14, fontweight='bold')
+plt.xlabel(r'Vertical Bond distance ($\AA$)',size=14, fontweight='bold')
 plt.xticks(size=14)
 plt.yticks(size=14)
 plt.show()
@@ -131,6 +131,9 @@ print(vH)
 frequency = a*10**(8)/np.pi*(De*JeV/(2*mu))**(0.5)/c #cm^-1 Morse frequency
 print('Morse')
 print(frequency)
+wexe = h/(2*np.pi)*(a*10**(10))**2/(c*4*np.pi*mAdsorbate*mH)*10**(-2)
+print('wexe uncorrected')
+print(wexe)
 print('bond length')
 print(re)
 'Variance and Covariance'

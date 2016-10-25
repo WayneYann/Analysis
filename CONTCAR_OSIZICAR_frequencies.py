@@ -12,7 +12,7 @@ import Text_Parse
 import shutil
 
 directory=os.path.expanduser('C:\Users\lansford\Desktop\VASP_Ad')
-directory_v02 = ''.join([directory,'_v04'])
+directory_v02 = ''.join([directory,'_v06'])
 
 if not os.path.exists(directory_v02):
     os.makedirs(directory_v02)

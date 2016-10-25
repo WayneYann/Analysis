@@ -13,7 +13,7 @@ import os
 from scipy.interpolate import interp1d
 mat.rcParams['mathtext.default'] = 'regular'
 mat.rcParams['lines.linewidth'] = 3
-mat.rcParams['lines.markersize'] = 20
+mat.rcParams['lines.markersize'] = 16
 mat.rcParams['legend.numpoints'] = 1
 vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/OHx_and_NHx_condensed_data_v05.csv')
 Metal_Labels = np.genfromtxt(vibration_file, delimiter=',', dtype=str)[0,0:6]
@@ -84,7 +84,7 @@ c = 29979245800 #cm/s
 h = 6.6260693*10**(-34) #planks constant
 kB = 1.3806505*10**(-23) #boltzman's constant
 JeV = 1.60217653*10**(-19) #eV to Joules
-
+T = 200 #Kelvin
 vMOpara = []
 NN = Data[:,0]
 Ms = Data[:,2]
@@ -92,13 +92,13 @@ cosa = Data[:,3]
 sina = Data[:,4]
 for i in range(0,len(vMO)):
     if Data[i,0]==3:
-        vMOpara.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2))/2)**0.5)
-        #vMOpara.append(vMO[i]*(Mrperp/Mrpara)**(0.5))
+        vMOpara.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2)))**0.5)
+        #vMOpara.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2)))**0.5)
     elif Data[i,0] ==4:
         Mr = MassO*NN[i]*Ms[i]/(MassO+NN[i]*Ms[i])
         Mrperp = MassO*NN[i]*cosa[i]*Ms[i]/(MassO+NN[i]*cosa[i]*Ms[i])
         Mrpara = ((Mr**2-Mrperp**2)/2)**(0.5)
-        vMOpara.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2))/2)**0.5)
+        vMOpara.append(vMO[i]*((1+NN[i]*(Ms[i]/MassO)*cosa[i]**2)/((1+NN[i]/2*(Ms[i]/MassO)*sina[i]**2)))**0.5)
         #vMOpara.append(vMO[i]*(Mrperp/Mrpara)**(0.5))
 
     elif Data[i,0]==2:
@@ -143,47 +143,53 @@ vMNparax = (pHOR[0]*vMNx+pHOR[1])
 '''parallel frequencies for M-H'''
 
 vMHpara = Data[:,55]
-idxH = np.isfinite(vMH) & np.isfinite(vMHpara)
+cosa = Data[:,63]
+sina = Data[:,64]
+
+idxH = np.isfinite(vMH) & np.isvMHparacal = vMH*(sina*(1/MassH+1/(NN/2*Ms*sina**2))/(2*cosa*(1/MassH+1/(NN*Ms*cosa**2))))**0.5finite(vMHpara)
 pHOR = np.polyfit(vMH[idxH], vMHpara[idxH], 1) 
 
 vMHx = np.arange(800,1300,1)
 vMHparax = (pHOR[0]*vMHx+pHOR[1])
-GibbsvibO = vibenergy([vMO,vMOpara,vMOpara],298)-298*vibentropy([vMO,vMOpara,vMOpara],298)
-GibbsvibN = vibenergy([vMN,vMNpara,vMNpara],298)-298*vibentropy([vMN,vMNpara,vMNpara],298)
-GibbsvibH = vibenergy([vMH,vMHpara,vMHpara],298)-298*vibentropy([vMH,vMHpara,vMHpara],298)
+GibbsvibO = vibenergy([vMO,vMOpara,vMOpara],T)-T*vibentropy([vMO,vMOpara,vMOpara],T)
+GibbsvibN = vibenergy([vMN,vMNpara,vMNpara],T)-T*vibentropy([vMN,vMNpara,vMNpara],T)
+GibbsvibH = vibenergy([vMH,vMHpara,vMHpara],T)-T*vibentropy([vMH,vMHpara,vMHpara],T)
 
-GibbsvibOfit = vibenergy([vMOx,vMOparax,vMOparax],298)-298*vibentropy([vMOx,vMOparax,vMOparax],298)
-GibbsvibNfit = vibenergy([vMNx,vMNparax,vMNparax],298)-298*vibentropy([vMNx,vMNparax,vMNparax],298)
-GibbsvibHfit = vibenergy([vMHx,vMHparax,vMHparax],298)-298*vibentropy([vMHx,vMHparax,vMHparax],298)
+GibbsvibOfit = vibenergy([vMOx,vMOparax,vMOparax],T)-T*vibentropy([vMOx,vMOparax,vMOparax],T)
+GibbsvibNfit = vibenergy([vMNx,vMNparax,vMNparax],T)-T*vibentropy([vMNx,vMNparax,vMNparax],T)
+GibbsvibHfit = vibenergy([vMHx,vMHparax,vMHparax],T)-T*vibentropy([vMHx,vMHparax,vMHparax],T)
 
 """Getting R2 values"""
 fGO = interp1d(vMOx,GibbsvibOfit)
 fGN = interp1d(vMNx,GibbsvibNfit)
 fGH = interp1d(vMHx,GibbsvibHfit)
 R2O = 1 - sum((fGO(vMO[idxO])-GibbsvibO[idxO])**2)/sum((fGO(vMO[idxO])-np.mean(GibbsvibO[idxO]))**2)
+MAEO = np.mean(abs(fGO(vMO[idxO])-GibbsvibO[idxO]))
 R2N = 1 - sum((fGN(vMN[idxN])-GibbsvibN[idxN])**2)/sum((fGN(vMN[idxN])-np.mean(GibbsvibN[idxN]))**2)
+MAEN = np.mean(abs(fGN(vMN[idxN])-GibbsvibN[idxN]))
 R2H = 1 - sum((fGH(vMH[idxH])-GibbsvibH[idxH])**2)/sum((fGH(vMH[idxH])-np.mean(GibbsvibH[idxH]))**2)
+MAEH = np.mean(abs(fGH(vMH[idxH])-GibbsvibH[idxH]))
 """Plotting Combined Gibbs Energy (Contribution from vibrations)"""
 
 plt.figure(1)
 #plt.figure(figsize=(18,10),dpi=500)
-plt.figure(figsize=(14,8))
+plt.figure(figsize=(16,8))
+plt.plot(vMO,GibbsvibO,'ob')
+plt.plot(vMN,GibbsvibN,'^g')
+plt.plot(vMH,GibbsvibH,'sr')
 plt.plot(vMOx,GibbsvibOfit,'-b')
 plt.plot(vMNx,GibbsvibNfit,'-g')
 plt.plot(vMHx,GibbsvibHfit,'-r')
 
-
-plt.plot(vMO,GibbsvibO,'ob')
-plt.plot(vMN,GibbsvibN,'og')
-plt.plot(vMH,GibbsvibH,'or')
-
 #plt.title('The Scaling of M-O Entropy',size=12, fontweight='bold')
-plt.xlabel('Perependicular Frequency [$cm^{-1}$]',size=24, fontweight='bold')
-plt.ylabel('G$_{vib}$ [eV]',size=24, fontweight='bold')
+plt.xlabel('Experimental Perependicular Frequency [$cm^{-1}$]',size=20, fontweight='bold')
+plt.ylabel('G$_{vib}$ at 298K [eV]',size=20, fontweight='bold')
 #plt.title('Atomic Oxygen',size=20, fontweight='bold')
-plt.legend(['O: R$^{2}$ = %.2f' %(R2O),'N: R$^{2}$ = %.2f' %(R2N),'H: R$^{2}$ = %.2f' %(R2H)],loc=2,prop={'size':24})
+plt.legend(['O: R$^{2}$ = %.2f \n     MAE = %.4f eV' %(R2O,MAEO),'N: R$^{2}$ = %.2f \n     MAE = %.4f eV' %(R2N,MAEN),'H: R$^{2}$ = %.2f \n     MAE = %.4f eV' %(R2H,MAEH)],loc=2,prop={'size':16})
 plt.xticks(size=20)
 plt.yticks(size=20)
+plt.xlim([190,1400])
+plt.ylim([-0.07,0.25])
 
 Marker = []
 for i in range(0,len(vMO)):
@@ -201,11 +207,48 @@ vM = vM[idx]
 Gibbsvib = Gibbsvib[idx]
 Marker = np.array(Marker)[idx]
 for x, y, s in zip(vM, Gibbsvib, Marker):
-    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=24, fontweight='bold',style='normal',name ='Calibri'))
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=16, fontweight='bold',style='normal',name ='Calibri'))
+adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
+plt.show()
+"""Plotting vibrational multiplier to Keq"""
+
+plt.figure(2)
+#plt.figure(figsize=(18,10),dpi=500)
+plt.figure(figsize=(16,8))
+Keq = np.exp(-GibbsvibO*JeV/(kB*T))
+Keqfit = np.exp(-GibbsvibOfit*JeV/(kB*T))
+fGO = interp1d(vMOx,Keqfit)
+R2O = 1 - sum((fGO(vMO[idxO])-Keq[idxO])**2)/sum((fGO(vMO[idxO])-np.mean(Keq[idxO]))**2)
+MAEO = np.mean(abs(fGO(vMO[idxO])-Keq[idxO]))
+plt.plot(vMO,Keq,'ob')
+plt.plot(vMOx,Keqfit,'-b')
+
+#plt.title('The Scaling of M-O Entropy',size=12, fontweight='bold')
+#plt.legend(['O: R$^{2}$ = %.2f \n     MAE = %.4f eV' %(R2O,MAEO)],loc=1,prop={'size':16})
+plt.xlabel('Experimental Perpendicular Frequency for Adsorbed Oxygen [$cm^{-1}$]',size=20, fontweight='bold')
+plt.ylabel('K$_{vib}$ at 298K',size=20, fontweight='bold')
+#plt.title('Atomic Oxygen',size=20, fontweight='bold')
+plt.xticks(size=20)
+plt.yticks(size=20)
+#plt.xlim([190,1400])
+#plt.ylim([-0.07,0.25])
+
+Marker = []
+for i in range(0,len(vMO)):
+    Marker.append(Metal_Info[i,0])
+mat.rc('text', usetex = False)
+texts = []
+idx = np.isfinite(vMO) & np.isfinite(Keq)
+vM = vMO[idx]
+Keq = Keq[idx]
+Marker = np.array(Marker)[idx]
+for x, y, s in zip(vM, Keq, Marker):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=16, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
-"""Plotting Gibbs Energy oxygen (Contribution from vibrations)"""
+"""
+#Plotting Gibbs Energy oxygen (Contribution from vibrations)
 plt.figure(1)
 plt.figure(figsize=(16,10),dpi=500)
 plt.plot(vMOx,vibenergy([vMOx,vMOparax,vMOparax],200)-200*vibentropy([vMOx,vMOparax,vMOparax],200),'-g')
@@ -234,7 +277,7 @@ for x, y, s in zip(vMO, Gibbsvib, Marker):
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
-"""Plotting Gibbs Energy Nitrogen (Contribution from vibration) """
+
 plt.figure(2)
 plt.figure(figsize=(16,10),dpi=500)
 plt.plot(vMNx,vibenergy([vMNx,vMNparax,vMNparax],200)-200*vibentropy([vMNx,vMNparax,vMNparax],200),'-g')
@@ -263,7 +306,7 @@ for x, y, s in zip(vMN, Gibbsvib, Marker):
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
 
-"""Plotting Gibbs Energy Hydrogen (Contribution from vibration) """
+
 plt.figure(3)
 plt.figure(figsize=(16,10),dpi=500)
 plt.plot(vMHx,vibenergy([vMHx,vMHparax,vMHparax],200)-200*vibentropy([vMHx,vMHparax,vMHparax],200),'-g')
@@ -291,3 +334,4 @@ for x, y, s in zip(vMH, Gibbsvib, Marker):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=20, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
+"""

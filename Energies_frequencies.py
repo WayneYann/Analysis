@@ -10,10 +10,11 @@ import Text_Parse
 from ase.io import read
 import csv
 import numpy as np
+import statmech
 
 
 
-directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\VASP_Files\VASP_Ad_v04')
+directory=os.path.expanduser('~/Box Sync/Synced_Files\Coding\Research\VASP_Files\VASP_Ad_v06')
 full_file_paths = Text_Parse.get_filepaths(directory)
 CONTCAR_FILES = Text_Parse.list_contains(full_file_paths,"CONTCAR")
 OSZICAR_FILES = Text_Parse.list_contains(full_file_paths,"OSZICAR")
@@ -21,18 +22,16 @@ freq_FILES = Text_Parse.list_contains(full_file_paths,"freq")
 CONTCAR_FILES = [i for i in CONTCAR_FILES if not ('Free_Surfaces' in i)]
 OSZICAR_FILES = [i for i in OSZICAR_FILES if not ('Free_Surfaces' in i)]
 OSZICAR_FILES = [i for i in OSZICAR_FILES if not ('Free_Surfaces' in i)]
-Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\VASP_Ad_v04\\","_CONTCAR")
+Surface_Names = Text_Parse.between_values(CONTCAR_FILES,"\\VASP_Ad_v06\\","_CONTCAR")
 Free_Surfaces = Text_Parse.list_contains(full_file_paths,"Free_Surfaces")
 Free_Surfaces = [i for i in Free_Surfaces if ('OSZICAR' in i)]
-#Repeating surface
-repeatX=2
-repeatY=2
 
-Data = [['Surface', 'Substrate','Adsorbate','Substrate Mass', 'NN','mindistance','NN2','Adsorbate mass','cos(alpha)','sin(alpha)', 'Mr','Zfrequency','frequency_corrected','Energy','Surface_Energy','Eads']]
+Data = [['Surface', 'Substrate','Adsorbate','Substrate Mass', 'NN','mindistance','NN2','NN2min','Adsorbate mass','cos(alpha)','sin(alpha)', 'NN2cosa', 'NN2sina', 'Mr','Zfrequency','frequency_corrected','Energy','Surface_Energy','Eads','vibGibbs','vibEntropy','vibEnthalpy','Gvibxyz','GvibxyzCF','Xfreqeuncy','Yfrequency','HorC']]
 num_Files = len(Surface_Names)
 c = 29979245800 #cm/s
 JeV = 1.60217653*10**(-19) #eV to Joules
 NA = 6.0221409*10**(23)
+freqoffset = 0
 for i in range(0,num_Files):
     ASE_CONTCAR = read(CONTCAR_FILES[i])
     numAtoms = len(ASE_CONTCAR)
@@ -57,6 +56,8 @@ for i in range(0,num_Files):
         Egas = -6.2283107
     elif Adsorbate == 'CHH':
         Egas = -12.137645
+    elif Adsorbate == 'CHHH':
+        Egas = -18.230307
     elif Adsorbate == 'O':
         Egas = -1.9555224
     elif Adsorbate == 'OH':
@@ -70,27 +71,34 @@ for i in range(0,num_Files):
     elif Adsorbate == 'NHH':
         Egas = -13.541416
     elif Adsorbate == 'H':
-        Egas =-1.2065081   
+        Egas =-1.2065081
+    elif Adsorbate =='CO':
+        Egas = -14.454577
+    elif Adsorbate =='OO':
+        Egas = -9.5884297
+    elif Adsorbate =='OOH': 
+        Egas = -10.625912
+    elif Adsorbate == 'NN':
+        Egas = -2*3.1718078-9.9115829971 #from experiment
     ASE_CONTCAR.set_constraint()
-    ASE_CONTCAR2 = ASE_CONTCAR.repeat((repeatX,repeatY,1))  
-    Coordinates = ASE_CONTCAR2.positions
-    Oatom = ASE_CONTCAR2[repeatX*repeatY*numAtoms-numAdsorbates].position
+    Adsorbate_index = numAtoms-numAdsorbates
+    vectDistance = ASE_CONTCAR.get_distances(Adsorbate_index,range(0,Adsorbate_index),mic=True,vector=True)
+    distances = ASE_CONTCAR.get_distances(Adsorbate_index,range(0,Adsorbate_index),mic=True,vector=False)
+    Oatom = ASE_CONTCAR[numAtoms-numAdsorbates].position
     mindistance = 1000
     NN2min = 1000
-    for j in range(0,repeatX*repeatY*numAtoms-numAdsorbates):
-        distance = sum((Oatom-Coordinates[j])**2)**(0.5)
-        if distance <= mindistance and np.abs(Oatom[2]-Coordinates[j][2]) > 0.05:
-            mindistance = distance
-            horizontal = ((Oatom[0]-Coordinates[j][0])**2+(Oatom[1]-Coordinates[j][1])**2)**(0.5)
-            vertical = abs(Oatom[2]-Coordinates[j][2])
-    for j in range(0,repeatX*repeatY*numAtoms-numAdsorbates):
-        distance = sum((Oatom-Coordinates[j])**2)**(0.5)
-        NN2vertTest = abs(Oatom[2]-Coordinates[j][2])
-        NN2horTest = ((Oatom[0]-Coordinates[j][0])**2+(Oatom[1]-Coordinates[j][1])**2)**(0.5)
-        if distance < NN2min and abs(vertical-NN2vertTest) >1:
-            NN2min = distance
-            NN2vertical = abs(Oatom[2]-Coordinates[j][2])
-            NN2horizontal = ((Oatom[0]-Coordinates[j][0])**2+(Oatom[1]-Coordinates[j][1])**2)**(0.5)
+    for j in range(0,Adsorbate_index):
+        if distances[j] <= mindistance and np.abs(vectDistance[j][2]) > 0.05:
+            mindistance = distances[j]
+            horizontal = ((vectDistance[j][0])**2+(vectDistance[j][1])**2)**(0.5)
+            vertical = abs(vectDistance[j][2])
+    for j in range(0,Adsorbate_index):
+        NN2vertTest = abs(vectDistance[j][2])
+        NN2horTest = ((vectDistance[j][0])**2+(vectDistance[1])**2)**(0.5)
+        if distances[j] < NN2min and abs(vertical-NN2vertTest) >1:
+            NN2min = distances[j]
+            NN2vertical = abs(vectDistance[j][2])
+            NN2horizontal = ((vectDistance[j][0])**2+(vectDistance[j][1])**2)**(0.5)
 
     cosa = vertical/mindistance
     sina = horizontal/mindistance
@@ -112,33 +120,102 @@ for i in range(0,num_Files):
         NN = 3
         NN2 = 3
     Mr = (1/Adsorbate_Mass+1/(NN*Substrate_Mass*cosa**2))**(-1)
-    Frequencies = Text_Parse.file2listflex(freq_FILES[i],[58,61],'cm-1',46,57)
-    Frequencies = Text_Parse.string2float(Frequencies)
-    Eigenvector = Text_Parse.file2listfixed(freq_FILES[i],0,10**6,0,None)
-    Eigenvector = Text_Parse.list_split(Eigenvector,' ')
-    Eigenvector = Text_Parse.string2float(Eigenvector)
-    newEigen = []
-    for j in range(0,len(Eigenvector)):
-        if len(Eigenvector[j]) == 6:
-            newEigen.append(Eigenvector[j])
-    Eigenvector=newEigen
-    newEigen = []
-    for j in range(0,len(Eigenvector)):
-        if abs(Eigenvector[j][3]) + abs(Eigenvector[j][4]) +abs(Eigenvector[j][5]) != 0:
-            newEigen.append(Eigenvector[j])
-    Eigenvector=newEigen
-    maxval = 0
-    Zfrequency = 0
-    if len(Frequencies) == numAdsorbates*3:
-        for j in range(0,numAdsorbates*3):
-            val = 0
-            sign=0
-            for k in range(0,numAdsorbates):
-                val = np.array(Eigenvector[(numAdsorbates*j+k)]) + val
-                sign = np.sign(Eigenvector[(numAdsorbates*j+k)][5]) + sign
-            if (abs(val[5]) - abs(val[4]) - abs(val[3])) > maxval and abs(sign) == numAdsorbates:
-                Zfrequency = Frequencies[j]
-                maxval = abs(val[5]) - abs(val[4]) - abs(val[3])
+    if CONTCAR_FILES[i][:-8] ==  freq_FILES[i-freqoffset][:-5]:
+        Frequencies = Text_Parse.file2listflex(freq_FILES[i-freqoffset],[58,61],'cm-1',46,57)
+        RorI = Text_Parse.file2listflex(freq_FILES[i-freqoffset],[58,61],'cm-1',5,7)
+        Frequencies = Text_Parse.string2float(Frequencies)
+        vibGibbs = statmech.vibgibbs(Frequencies,298)
+        vibEntropy = statmech.vibentropy(Frequencies,298)
+        vibEnthalpy = statmech.vibenergy(Frequencies,298)
+        Eigenvector = Text_Parse.file2listfixed(freq_FILES[i-freqoffset],0,10**6,0,None)
+        Eigenvector = Text_Parse.list_split(Eigenvector,' ')
+        Eigenvector = Text_Parse.string2float(Eigenvector)
+        newEigen = []
+        if 'f/i' in RorI:
+            vibGibbs = ''
+            vibEntropy = ''
+            vibEnthalpy = ''
+        
+        for j in range(0,len(Eigenvector)):
+            if len(Eigenvector[j]) == 6:
+                newEigen.append(Eigenvector[j])
+        Eigenvector=newEigen
+        newEigen = []
+        for j in range(0,len(Eigenvector)):
+            if abs(Eigenvector[j][3]) + abs(Eigenvector[j][4]) +abs(Eigenvector[j][5]) <> 0:
+                newEigen.append(Eigenvector[j])
+        Eigenvector=newEigen
+        maxZval = 0
+        maxXval = 0
+        maxYval = 0
+        Zfrequency = 0
+        Xfrequency = 0
+        Yfrequency = 0
+        if len(Frequencies) == numAdsorbates*3:
+            for j in range(0,numAdsorbates*3):
+                val = 0
+                Zsign=0
+                Ysign = 0
+                Xsign = 0
+                for k in range(0,numAdsorbates):
+                    val = np.array(Eigenvector[(numAdsorbates*j+k)]) + val
+                    #checking that z movment is in same direction
+                    Zsign = np.sign(Eigenvector[(numAdsorbates*j+k)][5]) + Zsign
+                    Ysign = np.sign(Eigenvector[(numAdsorbates*j+k)][4]) + Ysign
+                    Xsign = np.sign(Eigenvector[(numAdsorbates*j+k)][3]) + Xsign
+                if (abs(val[5]) - abs(val[4]) - abs(val[3])) > maxZval and abs(Zsign) == numAdsorbates and abs(Eigenvector[j*numAdsorbates][5]) == max(abs(np.array([item[5] for item in Eigenvector[j*numAdsorbates:((j+1)*numAdsorbates)]]))): 
+                    Zfrequency = Frequencies[j]
+                    maxZval = abs(val[5]) - abs(val[4]) - abs(val[3])
+                if (abs(val[4]) - abs(val[5]) - abs(val[3])) > maxYval and abs(Ysign) == numAdsorbates and abs(Eigenvector[j*numAdsorbates][4]) == max(abs(np.array([item[4] for item in Eigenvector[j*numAdsorbates:((j+1)*numAdsorbates)]]))):
+                    Yfrequency = Frequencies[j]
+                    maxYval = abs(val[4]) - abs(val[5]) - abs(val[3])
+                if (abs(val[3]) - abs(val[5]) - abs(val[4])) > maxXval and abs(Xsign) == numAdsorbates and abs(Eigenvector[j*numAdsorbates][3]) == max(abs(np.array([item[3] for item in Eigenvector[j*numAdsorbates:((j+1)*numAdsorbates)]]))):
+                    Xfrequency = Frequencies[j]
+                    maxXval = abs(val[3]) - abs(val[5]) - abs(val[4])
+            
+            for j in range(0,numAdsorbates*3):
+                val = 0
+                Zsign=0
+                Ysign = 0
+                Xsign = 0
+                for k in range(0,numAdsorbates):
+                    val = np.array(Eigenvector[(numAdsorbates*j+k)]) + val
+                    #checking that movment is in same direction
+                    Zsign = np.sign(Eigenvector[(numAdsorbates*j+k)][5]) + Zsign
+                    Ysign = np.sign(Eigenvector[(numAdsorbates*j+k)][4]) + Ysign
+                    Xsign = np.sign(Eigenvector[(numAdsorbates*j+k)][3]) + Xsign
+                if (abs(val[5]) - abs(val[4]) - abs(val[3])) > maxZval and abs(Zsign) == numAdsorbates and Zfrequency == 0: 
+                    Zfrequency = Frequencies[j]
+                    maxZval = abs(val[5]) - abs(val[4]) - abs(val[3])
+                if (abs(val[4]) - abs(val[5]) - abs(val[3])) > maxYval and abs(Ysign) == numAdsorbates and Yfrequency == 0:
+                    Yfrequency = Frequencies[j]
+                    maxYval = abs(val[4]) - abs(val[5]) - abs(val[3])
+                if (abs(val[3]) - abs(val[5]) - abs(val[4])) > maxXval and abs(Xsign) == numAdsorbates and Xfrequency == 0:
+                    Xfrequency = Frequencies[j]
+                    maxXval = abs(val[3]) - abs(val[5]) - abs(val[4])
+            for j in range(0,numAdsorbates*3):
+                val = 0
+                for k in range(0,numAdsorbates):
+                    val = np.array(Eigenvector[(numAdsorbates*j+k)]) + val
+                if (abs(val[5]) - abs(val[4]) - abs(val[3])) > maxZval and Zfrequency == 0 and abs(Eigenvector[j*numAdsorbates][5]) == max(abs(np.array([item[5] for item in Eigenvector[j*numAdsorbates:((j+1)*numAdsorbates)]]))): # 
+                    Zfrequency = Frequencies[j]
+                    maxZval = abs(val[5]) - abs(val[4]) - abs(val[3])
+                if (abs(val[4]) - abs(val[5]) - abs(val[3])) > maxYval and Yfrequency == 0 and abs(Eigenvector[j*numAdsorbates][4]) == max(abs(np.array([item[4] for item in Eigenvector[j*numAdsorbates:((j+1)*numAdsorbates)]]))):
+                    Yfrequency = Frequencies[j]
+                    maxYval = abs(val[4]) - abs(val[5]) - abs(val[3])
+                if (abs(val[3]) - abs(val[5]) - abs(val[4])) > maxXval and Xfrequency == 0 and abs(Eigenvector[j*numAdsorbates][3]) == max(abs(np.array([item[3] for item in Eigenvector[j*numAdsorbates:((j+1)*numAdsorbates)]]))):
+                    Xfrequency = Frequencies[j]
+                    maxXval = abs(val[3]) - abs(val[5]) - abs(val[4])
+                    
+    else:
+        freqoffset = freqoffset+1
+        vibGibbs = ''
+        vibEntropy = ''
+        vibEnthalpy = ''
+        Zfrequency = 0
+        Xfrequency = ''
+        Yfrequency = ''
+        
 
     Energy = Text_Parse.file2listflex(OSZICAR_FILES[i],23,['E'],27,42)
     Energy = Text_Parse.list_split(Energy," ")
@@ -158,11 +235,27 @@ for i in range(0,num_Files):
         Surface_Energy = Surface_Energy[0]
     De = -1*(Energy-Surface_Energy-Egas)
     a = (2*np.pi)*Zfrequency/c*((10**(-3)*Adsorbate_Mass/NA)/(2*De*JeV))**0.5*10**(10)
-    Mr = (1/Adsorbate_Mass+1/(NN*Substrate_Mass*cosa**2+(mindistance/NN2min)**6*NN2*Substrate_Mass*NN2cosa**2))**(-1)
+    """substracts ratio of 12-6 potential to estimate dispersion contribution with molecule below it."""
+    Hor_CF = Zfrequency*((1+NN*(Substrate_Mass/Adsorbate_Mass)*cosa**2)/(1+NN/2*(Substrate_Mass/Adsorbate_Mass)*sina**2))**0.5
+    Mr = (1/Adsorbate_Mass+1/(NN*Substrate_Mass*cosa**2+((mindistance/NN2min)**6-(mindistance/NN2min)**12)*NN2*Substrate_Mass*NN2cosa**2))**(-1)
     frequency_corrected = Zfrequency*(Adsorbate_Mass/Mr)**0.5
-    data = [Surface, Substrate, Adsorbate, Substrate_Mass, NN, mindistance,NN2, Adsorbate_Mass,cosa,sina, Mr, Zfrequency,frequency_corrected,Energy, Surface_Energy,Energy-Surface_Energy-Egas]    
+    Hor_CF = frequency_corrected*(sina*(1/Adsorbate_Mass+1/(NN/2*Substrate_Mass*sina**2))/(2*cosa*(1/Adsorbate_Mass+1/(NN*Substrate_Mass*cosa**2))))**0.5
+    if Zfrequency ==0:
+        Zfrequency = ''
+    if frequency_corrected ==0:
+        frequency_corrected = ''       
+    if Zfrequency <> '' and frequency_corrected <> '' and Xfrequency >0 and Yfrequency >0:
+        Gvibxyz = statmech.vibgibbs([Zfrequency,Xfrequency,Yfrequency],298)
+        GvibxyzCF = statmech.vibgibbs([frequency_corrected,Hor_CF,Hor_CF],298)
+    else:
+        Gvibxyz = ''
+        GvibxyzCF = ''
+    data = [Surface, Substrate, Adsorbate, Substrate_Mass, NN, mindistance,NN2, NN2min, Adsorbate_Mass,cosa,sina, NN2cosa, NN2sina, Mr, Zfrequency,frequency_corrected,Energy, Surface_Energy,Energy-Surface_Energy-Egas,vibGibbs,vibEntropy,vibEnthalpy,Gvibxyz,GvibxyzCF,Xfrequency,Yfrequency,Hor_CF]    
+    if isinstance(data[-1], float) == False:
+        data[-1] = ''
     Data.append(data)
-        
+
+    
 myfile = open('Energy_Frequency_Data.csv', 'wb')
 wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
 for j in range(0,len(Data)):

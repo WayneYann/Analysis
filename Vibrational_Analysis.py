@@ -109,7 +109,7 @@ plt.show()
 
 #Plotting Reduced Masses
 plt.figure(1)
-plt.figure(figsize=(16,8),dpi=500)
+plt.figure(figsize=(16,8))
 plt.plot(massM,MrO**2,'ob',markersize=16)
 plt.plot(massM,MrN**2,'og',markersize=16)
 plt.plot(massM,MrH**2,'or',markersize=16)
@@ -251,7 +251,7 @@ mat.rc('text', usetex = True)
 Marker = []
 for i in range(0,len(vMO)):
     #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+','+str(round(Data[i,31])).rstrip('.0')+'}}$'))
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+'}}$'))
+    Marker.append(Metal_Info[i,0])
 mat.rc('text', usetex = False)
 texts = []
 for x, y, s in zip(vMO, vMOhor, Marker):
@@ -286,7 +286,7 @@ mat.rc('text', usetex = True)
 Marker = []
 for i in range(0,len(vMO)):
     #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+','+str(round(Data[i,31])).rstrip('.0')+'}}$'))
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+'}}$'))
+    Marker.append(Metal_Info[i,0])
 mat.rc('text', usetex = False)
 texts = []
 for x, y, s in zip(vMO, ZPE, Marker):
@@ -363,7 +363,7 @@ plt.yticks(size=16)
 Marker = []
 for i in range(0,len(vMO)):
     #Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+','+str(round(Data[i,31])).rstrip('.0')+'}}$'))
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+'}}$'))
+    Marker.append(Metal_Info[i,0])
 mat.rc('text', usetex = False)
 texts = []
 for x, y, s in zip(vMO, SvRO, Marker):
@@ -592,7 +592,7 @@ mat.rc('text', usetex = True)
 Marker = []
 
 for i in range(0,len(vMO)):
-    Marker.append(''.join(Metal_Info[i,0]+'${^{'+str(round(Data[i,10])).rstrip('.0')+'}}$'))
+    Marker.append(Metal_Info[i,0])
 
 mat.rc('text', usetex = False)
 

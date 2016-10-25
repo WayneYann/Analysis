@@ -41,19 +41,22 @@ for i in range(0,len(Data_Labels)):
 idx = np.isfinite(vMO) & np.isfinite(vMO2)
 m1,b1 = np.polyfit(vMO[idx], vMO2[idx], 1)
 RvO2 = 1 - sum(((m1*vMO[idx]+b1)-vMO2[idx])**2)/sum(((m1*vMO[idx]+b1)-np.mean(vMO2[idx]))**2)
+MAEO2 = np.mean(abs((m1*vMO[idx]+b1)-vMO2[idx]))
 idx = np.isfinite(vMO) & np.isfinite(vOOsite1)
 m2,b2 = np.polyfit(vMO[idx], vOOsite1[idx], 1)
 ROO1 = 1 - sum(((m2*vMO[idx]+b2)-vOOsite1[idx])**2)/sum(((m2*vMO[idx]+b2)-np.mean(vOOsite1[idx]))**2) 
+MAEOO1 = np.mean(abs((m2*vMO[idx]+b2)-vOOsite1[idx]))
 idx = np.isfinite(vMO) & np.isfinite(vOOsite2)
 m3,b3 = np.polyfit(vMO[idx], vOOsite2[idx], 1)
 ROO2 = 1 - sum(((m3*vMO[idx]+b3)-vOOsite2[idx])**2)/sum(((m3*vMO[idx]+b3)-np.mean(vOOsite2[idx]))**2)
+MAEOO2 = np.mean(abs((m3*vMO[idx]+b3)-vOOsite2[idx]))
 mat.rc('text', usetex = False)
-plt.figure(2)
+#plt.figure(2)
 #plt.figure(figsize=(14,8),dpi=2000)
-plt.figure(figsize=(14,8))
+plt.figure(figsize=(16,10))
 plt.plot(vMO,vMO2,'ob',markersize=16)
 plt.plot(vMO,vOOsite1,'^g',markersize=16)
-plt.plot(vMO,vOOsite2,'^r',markersize=16)
+plt.plot(vMO,vOOsite2,'sr',markersize=16)
 plt.plot(np.array([min(vMO),max(vMO)]), m1*np.array([min(vMO),max(vMO)])+b1,'--b',lw=4)
 plt.plot(np.array([min(vMO),max(vMO)]), m2*np.array([min(vMO),max(vMO)])+b2,'--g',lw=4) 
 plt.plot(np.array([min(vMO),max(vMO)]), m3*np.array([min(vMO),max(vMO)])+b3,'--r',lw=4)
@@ -62,15 +65,23 @@ plt.plot(np.array([min(vMO),max(vMO)]), m3*np.array([min(vMO),max(vMO)])+b3,'--r
 #plt.xlabel(r'\textbf{time}',size=28)
 mat.rc('text', usetex=False)
 #matplotlib.rcParams['text.latex.preamble'] = [r'\boldmath']
-#plt.xlabel(r'$\mathbf{\nu}_{\perp}(M-O)$ [$cm^{-1}$]',size=28)
+
 mat.rc('text', usetex = False)
 plt.ylabel(r'$\mathbf{\nu}_{\perp}(M-O_{2})$ and (O-O) [$cm^{-1}$]',size=28)
-plt.legend([r'$\mathbf{\nu}_{\perp}(M-O_{2}$): %sx+%s' %(round(m1,2),int(round(b1,2))), \
-'(O-O) site 1: %sx+%s' %(round(m2,2),int(round(b2,2))) ,\
-'(O-O) site 2: %sx+%s' %(round(m3,2),int(round(b3,2)))],loc=2,prop={'size':20})
+plt.xlabel(r'$\mathbf{\nu}_{\perp}(M-O)$ [$cm^{-1}$]',size=28)
+
+plt.legend([r'$\mathbf{\nu}_{\perp}(M-O_{2}$): %sx+%s' %(round(m1,2),int(round(b1,2)))
++ '\n'+r'MAE: %s $cm^{-1}$' %(round(MAEO2,2)), \
+'(O-O) site 1: %sx+%s' %(round(m2,2),int(round(b2,2))) 
++ '\n'+r'MAE: %s $cm^{-1}$' %(round(MAEOO1,2)),\
+'(O-O) site 2: %sx+%s' %(round(m3,2),int(round(b3,2)))
++ '\n'+r'MAE: %s $cm^{-1}$' %(round(MAEOO2,2))],loc=2,prop={'size':18})
 plt.xticks(size=24)
 plt.yticks(size=24)
-
+plt.xlim([240,700])
+#plt.gca().tight_layout()
+plt.gcf().subplots_adjust(bottom=0.15)
+#plt.gca().xaxis.set_major_locator(plt.NullLocator())
 mat.rc('text', usetex = False)
 Marker = []
 
@@ -82,7 +93,7 @@ idxvOOsite2 = np.isfinite(vOOsite2)
 #vMO2s = np.concatenate((vMO2[idxvMO2],vOOsite1[idxvOOsite1],vOOsite2[idxvOOsite2]))
 vMOs = np.concatenate((vMO,vMO,vMO))
 vMO2s = np.concatenate((vMO2,vOOsite1,vOOsite2))
-
+"""
 for i in [i for i, x in enumerate(vMO2) if x]:
     if Metal_Info[i] == 'Ag(001)' or Metal_Info[i] == 'Ag(110)':
         Marker.append(''.join(Metal_Info[i]+'${^{'+str(Data[i,2]).replace(".0","")+'}}$'+'${^{,'+str(Data[i,5]).replace(".0","")+'}}$'))
@@ -98,6 +109,24 @@ for i in [i for i, x in enumerate(vOOsite2) if x]:
         Marker.append(''.join(Metal_Info[i]+'${^{'+str(Data[i,2]).replace(".0","")+'}}$'+'${^{,'+str(Data[i,11]).replace(".0","")+'}}$'))
     else:
         Marker.append(''.join(Metal_Info[i]+'${^{'+str(Data[i,2]).replace(".0","")+'}}$'))
+"""
+
+for i in [i for i, x in enumerate(vMO2) if x]:
+    if Metal_Info[i] == 'Ag(001)' or Metal_Info[i] == 'Ag(110)':
+        Marker.append(Metal_Info[i])
+    else:
+        Marker.append(Metal_Info[i])
+for i in [i for i, x in enumerate(vOOsite1) if x]:
+    if Metal_Info[i] == 'Ag(001)' or Metal_Info[i] == 'Ag(110)':        
+        Marker.append(Metal_Info[i])
+    else:
+        Marker.append(Metal_Info[i])
+for i in [i for i, x in enumerate(vOOsite2) if x]:
+    if Metal_Info[i] == 'Ag(001)' or Metal_Info[i] == 'Ag(110)':
+        Marker.append(Metal_Info[i])
+    else:
+        Marker.append(Metal_Info[i])
+
 mat.rc('text', usetex = False)
 
 texts = []
@@ -108,6 +137,7 @@ for x, y, s in zip(vMOs[idx], vMO2s[idx], np.array(Marker)[idx]):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=22, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
         arrowprops=dict(arrowstyle="-", color='k', lw=2))
+
 plt.show()
 
 #Plotting v(M-O) vs v(M-N), vMH, and vMH parallel vibrations
@@ -122,12 +152,15 @@ idx = np.isfinite(vMO) & np.isfinite(vMHhorlit)
 m3,b3 = np.polyfit(vMO[idx], vMHhorlit[idx], 1)
 RvHpara = 1 - sum(((m3*vMO[idx]+b3)-vMHhorlit[idx])**2)/sum(((m3*vMO[idx]+b3)-np.mean(vMHhorlit[idx]))**2)
 mat.rc('text', usetex = False)
-plt.figure(2)
-plt.figure(figsize=(14,8),dpi=2000)
+#plt.figure(2)
+plt.figure(figsize=(14,7),dpi=2000)
 #plt.figure(figsize=(14,8))
+plt.xticks(size=24)
+plt.yticks(size=24)
+plt.xlabel(r'$\mathbf{\nu}_{\perp}(M-O)$ [$cm^{-1}$]',size=24)
 plt.plot(vMO,vMN,'ob',markersize=16)
 plt.plot(vMO,vMH,'^g',markersize=16)
-plt.plot(vMO,vMHhorlit,'^r',markersize=16)
+plt.plot(vMO,vMHhorlit,'sr',markersize=16)
 plt.plot(np.array([min(vMO),max(vMO)]), m1*np.array([min(vMO),max(vMO)])+b1,'--b',lw=4)
 plt.plot(np.array([min(vMO),max(vMO)]), m2*np.array([min(vMO),max(vMO)])+b2,'--g',lw=4) 
 plt.plot(np.array([min(vMO),max(vMO)]), m3*np.array([min(vMO),max(vMO)])+b3,'--r',lw=4)
@@ -136,14 +169,13 @@ plt.plot(np.array([min(vMO),max(vMO)]), m3*np.array([min(vMO),max(vMO)])+b3,'--r
 #plt.xlabel(r'\textbf{time}',size=28)
 mat.rc('text', usetex=False)
 #matplotlib.rcParams['text.latex.preamble'] = [r'\boldmath']
-plt.xlabel(r'$\mathbf{\nu}_{\perp}(M-O)$ [$cm^{-1}$]',size=24)
+plt.xlim([240,700])
 mat.rc('text', usetex = False)
-plt.ylabel(r'$\mathbf{\nu}_{\perp}(M-N)$, $\mathbf{\nu}_{\perp}(M-H)$, $\mathbf{\nu}_{\parallel}(M-H)$ [$cm^{-1}$]',size=24)
+plt.ylabel(r'$\mathbf{\nu}_{\perp}$ and $\mathbf{\nu}_{\parallel}$ for atomic N and H [$cm^{-1}$]',size=24)
 plt.legend([r'$\mathbf{\nu}_{\perp}(M-N}$): %sx+%s' %(round(m1,2),int(round(b1,2))), \
 r'$\mathbf{\nu}_{\perp}(M-H}$): %sx+%s' %(round(m2,2),int(round(b2,2))) ,\
 r'$\mathbf{\nu}_{\parallel}(M-H}$): %sx+%s' %(round(m3,2),int(round(b3,2)))],loc=2,prop={'size':20})
-plt.xticks(size=24)
-plt.yticks(size=24)
+
 
 mat.rc('text', usetex = False)
 Marker = []
@@ -334,37 +366,42 @@ plt.show()
 
 #predicted and actual slope values
 #PLotting v(M-O) vs v(M-OH)
-vMODFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')])
-EadsODFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')])
-LO = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')])
-vMOHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='OH' and Data.Substrate[i]<>'Ni')])
-EadsOHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='OH' and Data.Substrate[i]<>'Ni')])
-LOH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='OH' and Data.Substrate[i]<>'Ni')])
-vMNDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='N' and Data.Substrate[i]<>'Ni')])
-EadsNDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='N' and Data.Substrate[i]<>'Ni')])
-LN = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='N' and Data.Substrate[i]<>'Ni')])
-vMNHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
-EadsNHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
-LNH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
-vMCDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='C' and Data.Substrate[i]<>'Ni')])
-EadsCDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='C' and Data.Substrate[i]<>'Ni')])
-LC = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='C' and Data.Substrate[i]<>'Ni')])
-vMCHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='CH' and Data.Substrate[i]<>'Ni')])
-EadsCHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='CH' and Data.Substrate[i]<>'Ni')])
-LCH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='CH' and Data.Substrate[i]<>'Ni')])
+vMODFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')])
+EadsODFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')])
+LO = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')])
+vMOHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='OH' and Data.Substrate[i]<>'Ni')])
+EadsOHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='OH' and Data.Substrate[i]<>'Ni')])
+LOH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='OH' and Data.Substrate[i]<>'Ni')])
+vMNDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='N' and Data.Substrate[i]<>'Ni')])
+EadsNDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='N' and Data.Substrate[i]<>'Ni')])
+LN = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='N' and Data.Substrate[i]<>'Ni')])
+vMNHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
+EadsNHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
+LNH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
+vMCDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='C' and Data.Substrate[i]<>'Ni')])
+EadsCDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='C' and Data.Substrate[i]<>'Ni')])
+LC = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='C' and Data.Substrate[i]<>'Ni')])
+vMCHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='CH' and Data.Substrate[i]<>'Ni')])
+EadsCHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='CH' and Data.Substrate[i]<>'Ni')])
+LCH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='CH' and Data.Substrate[i]<>'Ni')])
 
-vMNHHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NHH' and Data.Substrate[i]<>'Ni')])
-EadsNHHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NHH' and Data.Substrate[i]<>'Ni')])
-LNHH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NHH' and Data.Substrate[i]<>'Ni')])
-vMNHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
-EadsNHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
-LNH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
+vMNHHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NHH' and Data.Substrate[i]<>'Ni')])
+EadsNHHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NHH' and Data.Substrate[i]<>'Ni')])
+LNHH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NHH' and Data.Substrate[i]<>'Ni')])
+vMNHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
+EadsNHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
+LNH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='NH' and Data.Substrate[i]<>'Ni')])
 
-vMOHHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='OHH' and Data.Substrate[i]<>'Ni')])
-EadsOHHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='OHH' and Data.Substrate[i]<>'Ni')])
-LOHH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='OHH' and Data.Substrate[i]<>'Ni')])
+vMOHHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='OHH' and Data.Substrate[i]<>'Ni')])
+EadsOHHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='OHH' and Data.Substrate[i]<>'Ni')])
+LOHH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='OHH' and Data.Substrate[i]<>'Ni')])
 
-MetalLabels = [Data.Substrate[i] for i in range(0,len(Data.frequency_corrected)) if (Data.Surface[i] == 111 and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')]
+vMCHHDFT = np.array([Data.Zfrequency[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='CHH' and Data.Substrate[i]<>'Ni')])
+EadsCHHDFT = np.array([np.double(Data.Eads[i]) for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='CHH' and Data.Substrate[i]<>'Ni')])
+LCHH = np.array([Data.mindistance[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='CHH' and Data.Substrate[i]<>'Ni')])
+
+
+MetalLabels = [Data.Substrate[i] for i in range(0,len(Data.frequency_corrected)) if ((Data.Surface[i] == 111 or (Data.Surface[i] ==110 and Data.Substrate[i] in ['W','V'])) and  Data.Adsorbate[i] =='O' and Data.Substrate[i]<>'Ni')]
 
 vMODFT = np.array(vMODFT)
 EadsODFT = np.array(EadsODFT)
