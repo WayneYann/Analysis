@@ -38,7 +38,7 @@ Data2 = pd.read_csv(vibration_file2,sep=',',header=0)
 #Available Adsorbates: OHx, NHx, CHx, O2, OOH, N2, CO
 
 Ad1 = 'O'; Ad2 = 'OH'; Ad3 = 'CO'; Ad4 = 'OO'; 
-Surf1 = 111; NN1 = 3; BadMetals = ['Cr']
+Surf1 = 111; NN1 = 3; BadMetals = ['Cr','Al']
 freqs = Data.Zfrequency; masses = Data.Adsorbate_mass 
 #freqs = Data.frequency_corrected; masses = Data.Mr 
 
@@ -104,7 +104,7 @@ plt.plot(np.array([np.min(E4[idx2]),np.max(E4[idx2])]), m2*np.array([np.min(E4[i
 plt.plot(np.array([np.min(E3[idx1]),np.max(E3[idx1])]), m1*np.array([np.min(E3[idx1]),np.max(E3[idx1])])+b1,'-g')
 plt.xlabel('${\Delta}$E$_{ads}$ [eV]',size=32)
 plt.ylabel('$G_{vib}$ at 298K [eV]',size=32)
-plt.legend(['O: $G_{vib}$=%4.3f${\Delta}$E$_{ads}$ + %4.3f eV' %(m3,b3),'O$_{2}$: $G_{vib}$=%4.3f${\Delta}$E$_{ads}$ + %4.3f eV' %(m2,b2), '%s: $G_{vib}$=%4.3f${\Delta}$E$_{ads}$ + %1.0f eV' %(Ad3,m1,abs(b1))],loc=3,prop={'size':28},frameon=False)
+plt.legend(['O: $G_{vib}$=%4.3f${\Delta}$E$_{ads}$ + %4.3f eV' %(m3,b3),'O$_{2}$: $G_{vib}$=%4.3f${\Delta}$E$_{ads}$ + %4.3f eV' %(m2,b2), '%s: $G_{vib}$=%4.3f${\Delta}$E$_{ads}$ + %4.3f eV' %(Ad3,m1,abs(b1))],loc=3,prop={'size':28},frameon=False)
 plt.xticks(size=28)
 plt.yticks(size=28)
 plt.ylim([-.03,0.15])
@@ -152,8 +152,8 @@ for x, y, s in zip(v11, v24, M2):
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, )
 plt.show()
 
-idx1 = np.isfinite(Data2['v(M-O)']) & np.isfinite(Data2['v(M-O2)'])
-p = np.polyfit(Data2['v(M-O)'][idx1],Data2['v(M-O2)'][idx1], 1) 
+idx1 = np.isfinite(Data2['v(M-O)']) & np.isfinite(Data2['v(M-H)'])
+p = np.polyfit(Data2['v(M-O)'][idx1],Data2['v(M-H)'][idx1], 1) 
 m3 = p[0]
 b3=p[1]
 idx2 = np.isfinite(Data2['v(M-O)']) & np.isfinite(Data2['v(M-N)'])
@@ -163,23 +163,23 @@ b4=p[1]
 
 plt.figure(3)
 plt.figure(figsize=(14,10))
-plt.plot(Data2['v(M-O)'], Data2['v(M-O2)'],'g^')
-plt.plot(Data2['v(M-O)'], Data2['v(M-N)'],'bo')
-plt.plot(np.array([np.min(Data2['v(M-O)'][idx1]),np.max(Data2['v(M-O)'][idx1])]), m3*np.array([np.min(Data2['v(M-O)'][idx1]),np.max(Data2['v(M-O)'][idx1])])+b3,'-g')
-plt.plot(np.array([np.min(Data2['v(M-O)'][idx2]),np.max(Data2['v(M-O)'][idx2])]), m4*np.array([np.min(Data2['v(M-O)'][idx2]),np.max(Data2['v(M-O)'][idx2])])+b4,'-b')
-plt.xlabel(r'$\mathbf{\nu}_{\perp (M-O)}$ [$cm^{-1}$]',size=32)
-plt.ylabel(r'$\mathbf{\nu}_{\perp (M-X)}$ [$cm^{-1}$]',size=32)
-plt.legend([r'$\mathbf{\nu}_{\perp,O_{2}}$=%s$\mathbf{\nu}_{\perp,O}$ + %s eV' %(round(m3,2),(round(b3,1))),r'$\mathbf{\nu}_{\perp,N}$=%s$\mathbf{\nu}_{\perp,O}$ + %s eV' %(round(m4,2),round(b4,1))],loc=2,prop={'size':28},frameon=False)
+plt.plot(Data2['v(M-O)'], Data2['v(M-H)'],'rs')
+plt.plot(Data2['v(M-O)'], Data2['v(M-N)'],'^g')
+plt.plot(np.array([np.min(Data2['v(M-O)'][idx1]),np.max(Data2['v(M-O)'][idx1])]), m3*np.array([np.min(Data2['v(M-O)'][idx1]),np.max(Data2['v(M-O)'][idx1])])+b3,'-r')
+plt.plot(np.array([np.min(Data2['v(M-O)'][idx2]),np.max(Data2['v(M-O)'][idx2])]), m4*np.array([np.min(Data2['v(M-O)'][idx2]),np.max(Data2['v(M-O)'][idx2])])+b4,'-g')
+plt.xlabel(r'$\mathbf{\nu}_{\perp,O}$ [$cm^{-1}$]',size=32)
+plt.ylabel(r'$\mathbf{\nu}_{\perp,N,H}$ [$cm^{-1}$]',size=32)
+plt.legend([r'$\mathbf{\nu}_{\perp,H}$=%s$\mathbf{\nu}_{\perp,O}$ + %s eV' %(round(m3,2),(round(b3,1))),r'$\mathbf{\nu}_{\perp,N}$=%s$\mathbf{\nu}_{\perp,O}$ + %s eV' %(round(m4,2),round(b4,1))],loc=2,prop={'size':28},frameon=False)
 plt.xticks(size=28)
 plt.yticks(size=28)
-#plt.xlim([245,700])
-plt.ylim([190,600])
+plt.xlim([270,650])
+#plt.ylim([190,600])
 plt.gcf().subplots_adjust(bottom=0.15)
 plt.gcf().subplots_adjust(left=0.15)
 texts = []
 M3 = np.concatenate((Data2['Surface'][idx1],Data2.Surface[idx2]))
 vOO = np.concatenate((Data2['v(M-O)'][idx1],Data2['v(M-O)'][idx2]))
-vO2N = np.concatenate((Data2['v(M-O2)'][idx1],Data2['v(M-N)'][idx2]))
+vO2N = np.concatenate((Data2['v(M-H)'][idx1],Data2['v(M-N)'][idx2]))
 for x, y, s in zip(vOO, vO2N, M3):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=22, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, 
@@ -201,6 +201,8 @@ COgibbs = COThermo.get_gibbs_energy(298,101325);
 
 PtI = MetalLabels.index('Pt')
 AgI = MetalLabels.index('Ag')
+CuI = MetalLabels.index('Cu')
+PdI = MetalLabels.index('Pd')
 delGCOPt = G3[PtI]+E3[PtI]-COgibbs
 
 delGCOAg = G3[AgI]+E3[AgI]-COgibbs
@@ -227,14 +229,15 @@ p = np.polyfit(E3[idx2],G3[idx2], 1)
 mCO = p[0]
 bCO=p[1]
 
-pCO = 0.5
+mat.rcParams['lines.markersize'] = 10
+pCO = 10**(-8)
 
-xxmin = -0.7
-xxmax = 0
-yymin = -.7
-yymax = -0.3
-xx = pylab.linspace(xxmin, xxmax, 100)
-yy = pylab.linspace(yymin, yymax, 100)
+xxmin = -2.2
+xxmax = -1.5
+yymin = -2
+yymax = -1.5
+xx = pylab.linspace(xxmin, xxmax, 200)
+yy = pylab.linspace(yymin, yymax, 200)
 zz = pylab.zeros([len(yy), len(xx)])
 def thetaCO(EadsO, EadsCO):
     delGCO = EadsCO-COgibbs +mCO*EadsCO+bCO
@@ -249,18 +252,21 @@ for i in xrange(len(xx)):
         zz[j, i] = thetaCO(xx[i], yy[j])
 pylab.figure(4)
 pylab.pcolor(xx, yy, zz)
-#pylab.title('Coverage of CO with Scaling of Gvib')
+pylab.plot(E1,E3,'wo')
+pylab.title('Coverage of CO with Scaling of Gvib')
 pylab.ylabel('CO Eads [eV]')
 pylab.xlabel('O Eads [eV]')
 pylab.colorbar()
 pylab.ylim([yymin,yymax])
 pylab.xlim([xxmin,xxmax])
+for x, y, s in zip(E1+0.01, E3+0.02, MetalLabels):
+    texts.append(pylab.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=24, fontweight='bold',style='normal',name ='Calibri',color='w'))
 pylab.show()
 
 def thetaCO(EadsO, EadsCO):
-    delGCO = EadsCO-COgibbs +mCO*EadsCO+bCO+G3[PtI]
+    delGCO = EadsCO-COgibbs + G3[PdI]
     Kco = np.exp(-1*delGCO/(kB*298/JeV))
-    delGO = EadsO-O2gibbs/2 +G1[PtI]
+    delGO = EadsO-O2gibbs/2 +G1[PdI]
     Ko = np.exp(-1*delGO/(kB*298/JeV))
     theta = Kco*pCO/(1+Kco*pCO+(Ko*(1-pCO))**0.5)
     return theta
@@ -270,12 +276,15 @@ for i in xrange(len(xx)):
         zz[j, i] = thetaCO(xx[i], yy[j])
 pylab.figure(5)
 pylab.pcolor(xx, yy, zz)
+pylab.plot(E1,E3,'wo')
 pylab.ylim([yymin,yymax])
 pylab.xlim([xxmin,xxmax])
-#pylab.title('Coverage of CO without Vibrational Scaling')
+pylab.title('Coverage of CO using Gvib on Pd')
 pylab.ylabel('CO Eads [eV]')
 pylab.xlabel('O Eads [eV]')
 pylab.colorbar()
+for x, y, s in zip(E1+0.01, E3+0.02, MetalLabels):
+    texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=24, fontweight='bold',style='normal',name ='Calibri',color='w'))
 pylab.show()
 
 

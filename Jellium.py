@@ -14,15 +14,16 @@ import matplotlib as mat
 from ase.io import read
 
 #Input parameters
-Directory = 'Jellium/K_pvfixed'
-#Directory = 'N_Hollow_Morse'
-Folder = 'NH2111'
+Directory = 'NH_Hollow_Morse'
+#Directory = 'Jellium/K_pvfixed'
 Eads = 5.3189
-#Folder = 'Pt111'
+Folder = 'Pt111'
+#Folder = 'O111'
 mAdsorbate = 16
 mMetal = 27
 NN=3
-
+mEOtoOH = 0.43
+mENtoNH = 0.68
 ''''''''''''''''''''''''''''
 No need to change below here
 '''''''''''''''''''''''''''''
@@ -87,7 +88,7 @@ JeV = 1.60217653*10**(-19) #eV to Joules
 eVperwave = 1.23981*10**(-4)
 
 #Full fit
-idx = (Distances-mindistance>=0); Distances = Distances[idx]; Energies=Energies[idx]
+idx = (Distances-mindistance>=.1); Distances = Distances[idx]; Energies=Energies[idx]
 
 plt.figure(figsize=(7,5),dpi=500)
 ppot, pcov = curve_fit(func,Distances,Energies,p0=np.array([3.2,0.8,mindistance]),maxfev = 5000)
@@ -103,7 +104,7 @@ plt.plot(Distances,Energies,'o',Distance_sorted,Energy_fitted,'g',Distance_sorte
 plt.title('(Pt-O) Energy on 111-Hollow Site: PBE-D3',size=14, fontweight='bold')
 plt.ylabel('Potential Energy (eV)',size=14, fontweight='bold')
 plt.xlabel(r'Adsorbate-NN distance ($\AA$)',size=14, fontweight='bold')
-plt.legend(['Data','Fit De and re','Fixed De and re'])
+plt.legend(['Data','Fit De and re','Fixed De and re'],loc=2)
 plt.xticks(size=14)
 plt.yticks(size=14)
 plt.show()

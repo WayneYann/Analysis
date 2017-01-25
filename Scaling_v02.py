@@ -16,7 +16,7 @@ mat.rcParams['mathtext.default'] = 'regular'
 mat.rcParams['legend.numpoints'] = 1
 mat.rcParams['lines.linewidth'] = 3
 mat.rcParams['lines.markersize'] = 20
-vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/Energy_Frequency_Data.csv')
+vibration_file = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/Analysis/Energy_Frequency_Data_v02.csv')
 #with open(vibration_file,'rb') as csvfile:
 # newfile = csv.reader(csvfile, delimiter=',')
 Data = pd.read_csv(vibration_file,sep=',',header=0)
@@ -27,8 +27,8 @@ vibration_file2 = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/An
 Data2 = pd.read_csv(vibration_file2,sep=',',header=0)
 #Available Adsorbates: OHx, NHx, CHx, O2, OOH, N2, CO
 
-Ad1 = 'C'; Ad2 = 'CHHH'; Surf = 111; NN = 3; BadMetals = ['Al','Cu']
-freqs = Data.Zfrequency; masses = Data.Adsorbate_mass 
+Ad1 = 'O'; Ad2 = 'OH'; Surf = [100]; NN = 2; BadMetals = ['Al','Cr','Fe','W','V','Mo']#'W','Mo','V','Cr',
+freqs = Data.Yfrequency; masses = Data.Adsorbate_mass 
 #freqs = Data.frequency_corrected; masses = Data.Mr 
 
 """Dont change below this line"""
@@ -37,18 +37,20 @@ v1 = [];E1 = [];L1 = [];v2 = [];E2 = [];L2 = []; M1 = []; M2 = []; G1 = []; G2 =
 MetalLabels=[]; MetalLabels2=[]
 DataPoints = len(Data.frequency_corrected)
 for i in range(0,DataPoints):
-    if (Data.Surface[i] == Surf and Data.Substrate[i] not in BadMetals and Data.NN[i] == NN):
-        if Data.Adsorbate[i] ==Ad1:
+    if (Data.Surface[i] in Surf and Data.Substrate[i] not in BadMetals):
+        if Data.Adsorbate[i] ==Ad1  and Data.NN[i] == NN:
             MetalLabels.append(Data.Substrate[i])
             v1.append(freqs[i])
-            E1.append(Data.Eads[i])
+            E1.append(Data.EminusDisp[i])
+            #E1.append(Data.Eads[i])
             L1.append(Data.mindistance[i])
             M1.append(masses[i])
             G1.append(Data.vibGibbs[i])
-        elif Data.Adsorbate[i] ==Ad2:
+        elif Data.Adsorbate[i] ==Ad2  and Data.NN[i] == NN:
             MetalLabels2.append(Data.Substrate[i])
             v2.append(freqs[i])
-            E2.append(Data.Eads[i])
+            E2.append(Data.EminusDisp[i])
+            #E2.append(Data.Eads[i])
             L2.append(Data.mindistance[i])
             M2.append(masses[i])
             G2.append(Data.vibGibbs[i])
@@ -62,7 +64,11 @@ for i in range(0,len(MetalLabels)):
         G2 = G2[:i] + [float('nan')] + G2[i:]
 
 
-v1 = np.array(v1); v2=np.array(v2); E1 = np.array(E1); E2 = np.array(E2); L1 = np.array(L1); L2 = np.array(L2); M1 = np.array(M1); M2 = np.array(M2); G1 = np.array(G1); G2 = np.array(G2)
+v1 = np.array(v1).astype(np.float); v2=np.array(v2).astype(np.float)
+E1 = np.array(E1).astype(np.float); E2 = np.array(E2).astype(np.float)
+L1 = np.array(L1).astype(np.float); L2 = np.array(L2).astype(np.float)
+M1 = np.array(M1); M2 = np.array(M2)
+G1 = np.array(G1).astype(np.float); G2 = np.array(G2).astype(np.float)
 idx = np.isfinite(v1) & np.isfinite(v2)
 lAB = np.array(L1)[idx]/np.array(L2)[idx]
 rAB = np.mean(lAB)
@@ -98,17 +104,13 @@ adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'},
 plt.show()
 print('Energy slope')
 print(m1)
-print('bE')
+res = (m1*E1+b1)-E2
+sres = np.std(res,ddof=2)
+sx = np.std(E1,ddof=1)
+SE = sres/(sx*(len(E1)-1)**0.5)
+print(SE)
+print('Energy intercept')
 print(b1)
-print('LA')
-print('rAB')
-print(rAB)
-print('mAB')
-print(mAB)
-predslope = (m1)**0.5
-print('predicted slope')
-print(predslope)
-
 
 plt.figure(2)
 plt.figure(figsize=(6,4))
@@ -135,6 +137,10 @@ adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'},
 plt.show()
 print('Frequency slope')
 print(m1)
-print('Error')
-Error = predslope- m1
-print(Error)
+res = (m1*v1+b1)-v2
+sres = np.std(res,ddof=2)
+sx = np.std(v1,ddof=1)
+SE = sres/(sx*(len(v1)-1)**0.5)
+print(SE)
+print('Frequency intercept')
+print(b1)
