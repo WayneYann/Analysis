@@ -138,10 +138,10 @@ for i in range(0,num_Files):
         RorI = Text_Parse.file2listflex(freq_FILES[i-freqoffset],[58,61],'cm-1',5,7)
         RorI = [x.strip(' ') for x in RorI]
         Frequencies = Text_Parse.string2float(Frequencies)
-        vibGibbs = statmech.vibgibbs(Frequencies,298)
+        vibGibbs = statmech.vibgibbs(Frequencies,400)
         ZPE = statmech.vibenergy(Frequencies,0)
-        vibEntropy = statmech.vibentropy(Frequencies,298)
-        vibEnthalpy = statmech.vibenergy(Frequencies,298)
+        vibEntropy = statmech.vibentropy(Frequencies,400)
+        vibEnthalpy = statmech.vibenergy(Frequencies,400)
         Eigenvector = Text_Parse.file2listfixed(freq_FILES[i-freqoffset],0,10**6,0,None)
         Eigenvector = Text_Parse.list_split(Eigenvector,' ')
         Eigenvector = Text_Parse.string2float(Eigenvector)

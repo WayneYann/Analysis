@@ -79,8 +79,8 @@ plt.legend(['111-Hollow','110-Bridge','100-Hollow','100-Bridge']
 plt.xticks(size=28)
 plt.yticks(size=28)
 
-plt.xlim([190,550])
-plt.ylim([210,450])
+#plt.xlim([190,550])
+#plt.ylim([210,450])
 plt.gcf().subplots_adjust(bottom=0.15)
 plt.gcf().subplots_adjust(left=0.15)
 texts = []
@@ -91,7 +91,7 @@ for x, y, s in zip(OZ, OHZ, Metals):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=32, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
-p = np.polyfit(OZ, OHZ, 1)
+p = np.polyfit(OZ**2, OHZ**2, 1)
 m1 = p[0]
 b1=p[1]
 print('slope')
@@ -124,7 +124,7 @@ for x, y, s in zip(OX, OHX, Metals):
     texts.append(plt.text(x, y, s, bbox={'pad':0, 'alpha':0}, size=32, fontweight='bold',style='normal',name ='Calibri'))
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'}, arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
-p = np.polyfit(OX, OHX, 1)
+p = np.polyfit(OX**2, OHX**2, 1)
 m1 = p[0]
 b1=p[1]
 print('slope')
@@ -334,8 +334,9 @@ vPd = np.array([1750.07,351.6,348.65,323.906,164.009,162.306])
 
 mat.rcParams['lines.markersize'] = 20
 Pairs = ['Cu','Pt','Ag','Rh','Al','Ir','Ni','Pd']
-vibgibbs = [statmech.vibgibbs(vCu,298),statmech.vibgibbs(vPt,298),statmech.vibgibbs(vAg,298),statmech.vibgibbs(vRh,298),statmech.vibgibbs(vAl,298),statmech.vibgibbs(vIr,298),statmech.vibgibbs(vNi,298),statmech.vibgibbs(vPd,298)]
-vibgibbsTaylor = [statmech.vibgibbsTaylor(vCu,298,vCu),statmech.vibgibbsTaylor(vPt,298,vCu),statmech.vibgibbsTaylor(vAg,298,vCu),statmech.vibgibbsTaylor(vRh,298,vCu),statmech.vibgibbsTaylor(vAl,298,vCu),statmech.vibgibbsTaylor(vIr,298,vCu),statmech.vibgibbsTaylor(vNi,298,vCu),statmech.vibgibbsTaylor(vPd,298,vCu)]
+Temp = 400
+vibgibbs = [statmech.vibgibbs(vCu,Temp),statmech.vibgibbs(vPt,Temp),statmech.vibgibbs(vAg,Temp),statmech.vibgibbs(vRh,Temp),statmech.vibgibbs(vAl,Temp),statmech.vibgibbs(vIr,Temp),statmech.vibgibbs(vNi,Temp),statmech.vibgibbs(vPd,Temp)]
+vibgibbsTaylor = [statmech.vibgibbsTaylor(vCu,Temp,vCu),statmech.vibgibbsTaylor(vPt,Temp,vCu),statmech.vibgibbsTaylor(vAg,Temp,vCu),statmech.vibgibbsTaylor(vRh,Temp,vCu),statmech.vibgibbsTaylor(vAl,Temp,vCu),statmech.vibgibbsTaylor(vIr,Temp,vCu),statmech.vibgibbsTaylor(vNi,Temp,vCu),statmech.vibgibbsTaylor(vPd,Temp,vCu)]
 plt.figure(18)
 plt.figure(figsize=(12,10))
 #plt.figure(figsize=(12,10))
@@ -347,8 +348,8 @@ plt.ylabel('Taylor Expansion (eV)',size=24)
 plt.legend(['Metal','Parity Line'],loc=2,prop={'size':20})
 plt.xticks(size=20)
 plt.yticks(size=20)
-plt.xlim([-0.025,0.15])
-plt.ylim([-0.025,0.16])
+#plt.xlim([-0.025,0.15])
+#plt.ylim([-0.025,0.16])
 texts = []
 for a, b, s in zip(vibgibbs,vibgibbsTaylor,Pairs):
     texts.append(plt.text(a, b, s, bbox={'pad':0, 'alpha':0}, size=24, fontweight='bold',style='normal',name ='Calibri'))

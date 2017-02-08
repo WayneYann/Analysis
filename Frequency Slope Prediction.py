@@ -20,10 +20,12 @@ Folder2 = 'NH111'
 m2 = 15
 Directory3 = '\Jellium\Kfixed'
 Folder3 = 'NH2111'
+Directory1 = 'PBE_Morse/O_Hollow_Morse'
+Folder1 = 'Rh111'
 m2 = 16
 mE = 0.25
-mindist = -0.55
-maxdist = 0.55
+mindist = 0
+maxdist = 1
 #Directory1 = 'Jellium/Kfixed'
 #Directory2 = 'Jellium/Kfixed'
 #Folder1 = 'N111'
@@ -42,6 +44,7 @@ ppot, Energies, Distances = Morse_Func.Morse_Fit(directory,mindist,maxdist)
 De1 = ppot[0]
 a1 = ppot[1]
 re1=ppot[2]
+print(a1)
 
 
 directory2=os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/VASP_Files/%s/%s' % (Directory2,Folder2))

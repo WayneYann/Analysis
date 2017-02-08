@@ -16,8 +16,8 @@ from ase.io import read
 #Input parameters
 #Directory = 'O2_Ontops/Vertical'
 Directory = 'Jellium/Al'
-#Directory = 'O_Hollow_RPBE_noD'
-Folder = 'O111'
+Directory = 'PBE_Morse/O_Hollow_Morse'
+Folder = 'Ni111'
 numAdsorbates = 3
 mAdsorbate = 16
 mMetal = 27
@@ -93,7 +93,7 @@ JeV = 1.60217653*10**(-19) #eV to Joules
 eVperwave = 1.23981*10**(-4)
 
 #Full fit
-plt.figure(figsize=(7,5),dpi=500)
+#plt.figure(figsize=(7,5),dpi=500)
 
 #idx = (Distances-mindistance<3)*(Distances-mindistance>-0.7)
 #Distances = Distances[idx]
@@ -103,6 +103,7 @@ ppot, pcov = curve_fit(func,Distances,Energies,p0=np.array([3.2,0.8,mindistance]
 De = ppot[0]
 a = ppot[1]
 re=ppot[2]
+print(a)
 Distance_sorted = np.linspace(min(Distances),max(Distances),50)
 Energy_fitted = func(Distance_sorted,De,a,re)
 plt.plot(Distances,Energies,'o',Distance_sorted,Energy_fitted)

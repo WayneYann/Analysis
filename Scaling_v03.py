@@ -27,8 +27,8 @@ Data.columns = cols
 #Data2 = pd.read_csv(vibration_file2,sep=',',header=0)
 #Available Adsorbates: OHx, NHx, CHx, O2, OOH, N2, CO
 
-Ad1 = 'N'; Ad2 = 'NH'; Surf = [100,111,110]; NN = [3,2,1,4]; BadMetals = ['Al','Cr','Fe','W','V','Mo']#'W','Mo','V','Cr',
-freqs = Data.Zfrequency*Data['cos(alpha)']; masses = Data.Adsorbate_mass 
+Ad1 = 'N'; Ad2 = 'OH'; Surf = [111]; NN = 3; BadMetals = ['Al','Cr','Fe','W','V','Mo']#'W','Mo','V','Cr',
+freqs = Data.Zfrequency; masses = Data.Adsorbate_mass 
 #freqs = Data.frequency_corrected; masses = Data.Mr 
 
 """Dont change below this line"""
@@ -38,7 +38,7 @@ MetalLabels=[]; MetalLabels2=[]
 DataPoints = len(Data.frequency_corrected)
 for i in range(0,DataPoints):
     if (Data.Surface[i] in Surf and Data.Substrate[i] not in BadMetals):
-        if Data.Adsorbate[i] ==Ad1 and Data.NN[i] in NN:
+        if Data.Adsorbate[i] ==Ad1  and Data.NN[i] == NN:
             MetalLabels.append(Data.Substrate[i])
             v1.append(freqs[i])
             E1.append(Data.Eads[i])
@@ -46,7 +46,7 @@ for i in range(0,DataPoints):
             L1.append(Data.mindistance[i])
             M1.append(masses[i])
             G1.append(Data.vibGibbs[i])
-        elif Data.Adsorbate[i] ==Ad2 and Data.NN[i] in NN:
+        elif Data.Adsorbate[i] ==Ad2  and Data.NN[i] == NN:
             MetalLabels2.append(Data.Substrate[i])
             v2.append(freqs[i])
             E2.append(Data.Eads[i])
@@ -65,7 +65,7 @@ for i in range(0,len(MetalLabels)):
 
 
 v1 = np.array(v1).astype(np.float); v2=np.array(v2).astype(np.float)
-#v1 = v1**2; v2= v2**2
+v1 = v1**2; v2= v2**2
 E1 = np.array(E1).astype(np.float); E2 = np.array(E2).astype(np.float)
 L1 = np.array(L1).astype(np.float); L2 = np.array(L2).astype(np.float)
 M1 = np.array(M1); M2 = np.array(M2)
@@ -80,13 +80,14 @@ L1 = L1[idx]; L2 = L2[idx]
 #PtI = list(MetalLabels).index('Pt')
 mat.rc('text', usetex = False)
 
-plt.figure(1)
-plt.figure(figsize=(6,4))
+#plt.figure(1)
+#plt.figure(figsize=(6,4))
 p = np.polyfit(E1, E2, 1)
 m1 = p[0]
 b1=p[1]
 R2 = 1 - sum(((m1*E1+b1)-E2)**2)/sum((E2-np.mean(E2))**2)
 #plt.figure(figsize=(12,10))
+"""
 plt.plot(E1, E2,'bo')
 plt.plot(np.array([np.min(E1),np.max(E1)]), m1*np.array([np.min(E1),np.max(E1)])+b1,'--b')
 #plt.plot(EadsforExp, vMOExp,'g^')
@@ -103,6 +104,7 @@ for a, b, s in zip(E1,E2,MetalLabels):
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'},
     arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
+"""
 print('Energy slope')
 print(m1)
 res = (m1*E1+b1)-E2
@@ -113,13 +115,15 @@ print(SE)
 print('Energy intercept')
 print(b1)
 
-plt.figure(2)
-plt.figure(figsize=(6,4))
+
+#plt.figure(2)
+#plt.figure(figsize=(6,4))
 p = np.polyfit(v1, v2, 1)
 m1 = p[0]
 b1=p[1]
 R2 = 1 - sum(((m1*v1+b1)-v2)**2)/sum((v2-np.mean(v2))**2)
 #plt.figure(figsize=(12,10))
+"""
 plt.plot(v1, v2,'bo')
 plt.plot(np.array([np.min(v1),np.max(v1)]), m1*np.array([np.min(v1),np.max(v1)])+b1,'--b')
 #plt.plot(EadsforExp, vMOExp,'g^')
@@ -136,6 +140,7 @@ for a, b, s in zip(v1,v2,MetalLabels):
 adjustText.adjust_text(texts,autoalign=True,only_move={'points':'y','text':'y'},
     arrowprops=dict(arrowstyle="-", color='k', lw=2))
 plt.show()
+"""
 print('Frequency slope')
 print(m1)
 res = (m1*v1+b1)-v2

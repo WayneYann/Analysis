@@ -16,9 +16,9 @@ import os
 Atomelement = 'Pt'
 Atomindex = 53
 Atomelement = 'O'
-Atomindex = 65
+Atomindex = 0
 
-filepath = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/VASP_Files/Projected_Densities/CO_on_Pt')
+filepath = os.path.expanduser('~/Box Sync/Synced_Files/Coding/Research/VASP_Files/Projected_Densities/O')
 
 filepath.replace('\\','/')
 
